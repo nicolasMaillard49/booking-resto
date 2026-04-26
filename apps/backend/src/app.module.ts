@@ -5,6 +5,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { SettingsModule } from './modules/settings/settings.module';
 
 @Module({
   imports: [
@@ -23,8 +24,8 @@ import { AuthModule } from './modules/auth/auth.module';
 
     PrismaModule,
     AuthModule,
+    SettingsModule,
     // Resto modules — wired in later milestones :
-    // SettingsModule (M1.7)
     // ServiceWindowsModule (M3.2), ScheduleExceptionsModule (M3.4)
     // NotificationsModule (M4.9), BookingsModule (M2.7 - depends on above)
     // HomeSectionsModule (M5.2), MenuDocumentsModule (M5.4), ContactMessagesModule (M5.7)
