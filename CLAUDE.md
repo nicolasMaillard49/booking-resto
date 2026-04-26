@@ -4,153 +4,141 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project overview
 
-Booking Pro is a multi-tenant online booking system for French service providers (hairdressers, osteopaths, driving schools, etc.). One backend + one database serves many businesses, each identified by a URL `slug` (e.g. `/salon-emma`). It is a pnpm monorepo with two apps and two shared packages.
+**Booking Resto** est un template mono-tenant + mono-vertical pour sites de restaurant avec réservation en ligne. Fork du template multi-vertical [booking-pro](https://github.com/nicolasMaillard49/booking-pro) extrait le 2026-04-26.
+
+Différence centrale vs booking-pro : la résa porte sur une **table pour N convives** (`partySize`) sur une **plage de service** (midi/soir) au lieu d'une prestation à durée fixe pour 1 personne. Pas de modèle `Service`. Pas de modèle `Review`.
 
 ## Repository layout
 
 ```
 apps/
-  backend/   NestJS 10 REST API                 :3101   (Swagger at /api/docs)
-  frontend/  Nuxt 3 public site + admin panel   :3100
-             ├─ /[slug]      SSR public zone (dynamic business routes)
-             └─ /admin/**    SPA admin zone (ssr: false, noindex)
+  backend/   NestJS 10 REST API                 :3101  (Swagger /api/docs)
+  frontend/  Nuxt 3 public + admin              :3100
+             ├─ /                public (SSR)
+             ├─ /menu            page menu (PDF/image embed)
+             ├─ /reservation     tunnel 1-page (ssr:false)
+             └─ /admin/**        SPA admin (ssr:false, noindex)
 packages/
-  prisma/    schema.prisma + migrations + seed (package name: @booking-resto/prisma)
-  shared/    TypeScript types shared across apps (package name: @booking-resto/shared)
+  prisma/    schema + migrations + seed
+  shared/    types DTO/entity partagés
 ```
-
-The admin panel was originally a separate Nuxt app (`apps/admin`) but was merged into `apps/frontend` as a zone. The split is now done via Nuxt `routeRules` in `apps/frontend/nuxt.config.ts`: `/admin/**` disables SSR and adds `X-Robots-Tag: noindex, nofollow`.
-
-Workspaces are declared in `pnpm-workspace.yaml` / root `package.json`. Apps import shared types via `@booking-resto/shared` (which compiles to `dist/` — run `pnpm --filter shared build` if types get stale).
 
 ## Common commands
 
-All commands run from the repo root unless stated otherwise.
-
 ```bash
-# Install everything
 pnpm install
+pnpm dev                                              # backend 3101 + frontend 3100
+pnpm --filter backend test                            # Jest backend
+pnpm --filter backend dev                             # backend seul (watch)
+pnpm --filter frontend dev                            # frontend seul
 
-# Run the two apps in parallel (requires DB already up)
-pnpm dev
+pnpm db:migrate                                       # prisma migrate dev
+pnpm db:seed                                          # seed admin + settings + windows + sections
+pnpm db:studio                                        # prisma studio
 
-# Run a single app
-pnpm --filter backend dev      # http://localhost:3101 — API + Swagger
-pnpm --filter frontend dev     # http://localhost:3100 — public + /admin
-
-# Build everything (order matters: shared → prisma client → apps)
-pnpm build
-
-# Lint / typecheck (runs across workspaces via `-r`)
-pnpm lint
-pnpm type-check
-
-# Database (wrappers around packages/prisma scripts)
-pnpm db:migrate    # prisma migrate dev
-pnpm db:seed       # ts-node prisma/seed.ts
-pnpm db:studio     # prisma studio
+# Docker dev infra
+COMPOSE_PROJECT_NAME=booking-resto docker compose up postgres mailhog -d
 ```
-
-### Backend-specific
-
-```bash
-cd apps/backend
-pnpm dev           # nest start --watch
-pnpm build         # nest build → dist/
-pnpm start         # node dist/main (prod)
-pnpm test          # jest (unit tests)
-pnpm test:watch
-pnpm test -- path/to/file.spec.ts   # run a single test file
-pnpm test -- -t "should generate slots"  # run by test name
-```
-
-### Prisma package-specific
-
-Prisma commands need `DATABASE_URL` in the environment. From `packages/prisma/`:
-
-```bash
-DATABASE_URL="postgresql://booking:booking123@localhost:5440/booking_pro" npx prisma migrate dev --name init
-DATABASE_URL="..." npx prisma db seed
-DATABASE_URL="..." npx prisma studio
-```
-
-Note: `docker-compose.yml` exposes Postgres on host port **5440** (mapped to container 5432). `.env.example` shows 5432 — if you use the dockerized DB, use **5440** in your local `DATABASE_URL`.
-
-### Dev infrastructure (Docker)
-
-```bash
-# DB + MailHog only (recommended for local dev; apps run on host)
-docker-compose up postgres mailhog -d
-
-# Full stack in containers
-docker-compose up -d
-docker-compose exec backend npx prisma migrate deploy
-docker-compose exec backend npx prisma db seed
-```
-
-MailHog web UI: http://localhost:8025. SMTP on 1025.
-
-### Required environment
-
-`apps/backend/.env` must exist before running the backend. Copy from `.env.example` at the repo root. Key vars: `DATABASE_URL`, `JWT_SECRET`, `JWT_REFRESH_SECRET`, `FRONTEND_URL` (CORS allow-list — a single origin now that admin is part of the frontend), `PORT`, and `SMTP_*`.
-
-Seeded admin credentials (after `pnpm db:seed`) — sign in at `http://localhost:3100/admin/login`: `admin@salon-emma.fr / Admin1234!` for the `salon-emma` business.
 
 ## Architecture
 
-### Multi-tenancy model
+### Backend modules
 
-Every domain entity (`Service`, `Booking`, `Review`, `Availability`, `BlockedSlot`, `User`) is scoped to a `Business` via `businessId` (cascade delete). The public frontend routes by slug (`/salon-emma`), the admin panel scopes by the JWT's `businessId` claim. There is **no cross-tenant admin** — a logged-in user can only act on their own business.
+```
+auth/                 # JWT login/refresh/logout
+bookings/             # generateSlots + create + cancel/confirm tokens + admin CRUD
+service-windows/      # plages récurrentes (label, daysOfWeek[], startTime, endTime)
+schedule-exceptions/  # fermetures ponctuelles (startDate, endDate, reason)
+home-sections/        # sections éditoriales home (drag-réordonnables)
+menu-documents/       # documents page /menu (image OU PDF)
+contact-messages/     # form contact public + captcha HMAC + admin CRUD
+settings/             # whitelist clé/valeur + typed getters
+images/               # bytea Postgres, accept image/* + application/pdf, max 5 Mo, magic-bytes check
+notifications/        # MailerService abstrait (Nodemailer dev / Resend prod) + 9 templates HTML + cron J-1
+public/               # /public/{site,schedule,home-sections,menu-documents,availability-slots}
+stats/                # KPI couverts (today, midi/soir, chart 7j)
+```
 
-See `packages/prisma/schema.prisma` for the full data model and enums (`BookingStatus`, `PaymentStatus`, `UserRole`).
+### Setting keys (whitelist)
 
-### Backend (NestJS) structure
+Toutes définies dans `apps/backend/src/modules/settings/settings.constants.ts` :
 
-`apps/backend/src/`:
-- `main.ts` — bootstrap: helmet, strict CORS (allow-list from `FRONTEND_URL`), global `ValidationPipe` (whitelist + forbidNonWhitelisted + transform), global `HttpExceptionFilter` and `TransformInterceptor`, Swagger at `/api/docs`.
-- `app.module.ts` — root module wiring config, Prisma, and feature modules.
-- `prisma/` — `PrismaService` (the single DB connector injected everywhere).
-- `common/` — `filters/` (uniform error format), `guards/` (JWT auth guard), `decorators/` (`@Public()` to bypass the global guard, `@CurrentUser()`), `interceptors/` (response envelope transform).
-- `modules/` — one folder per feature: `auth`, `business`, `services`, `bookings`, `reviews`, `availability`, `notifications`. Each typically has `*.module.ts`, `*.controller.ts`, `*.service.ts`, `dto/`.
+| Clé | Type | Défaut |
+|---|---|---|
+| `capacity_max` | int | 30 |
+| `default_meal_duration_min` | int | 90 |
+| `auto_confirm_threshold` | int | 6 |
+| `lookahead_days` | int | 90 |
+| `cutoff_hours` | int | 2 |
+| `slot_interval_min` | int | 15 |
+| `week_starts_on` | int | 1 |
+| `brand_name` | str | "Mon Restaurant" |
+| `hero_title`, `hero_subtitle`, `hero_image_id` | str | … |
+| `contact_address`, `contact_phone`, `contact_email` | str | … |
+| `google_maps_embed_url`, `instagram_url` | str | "" |
+| `seo_{home,menu}_{title,description}` | str | "" |
 
-Auth is JWT access + refresh. Routes are protected by default (global guard); mark public routes with `@Public()`. Admin endpoints read `req.user.businessId` and filter/scope all DB access by it.
+`PUT /admin/settings` rejette toute clé hors whitelist.
 
-### Booking slot algorithm (critical)
+### Algorithme generateSlots
 
-`BookingsService.generateSlots()` is the heart of the system. When computing availability for a date:
+`BookingsService.generateSlots(date, partySize)` (cf. `bookings.service.ts`) :
 
-1. Check `Availability.isActive` for that weekday.
-2. Fetch same-day bookings with status `PENDING` or `CONFIRMED`.
-3. Fetch `BlockedSlot` rows for that date.
-4. Generate 30-minute slots from open → close.
-5. For each slot, mark `available: false` if it overlaps any occupied range. Overlap rule: `slotStart < occupiedEnd && slotEnd > occupiedStart`.
-6. If the date is today, drop slots earlier than `now + 30min` buffer.
+1. Vérifie lookahead `[today, today + lookahead_days]`.
+2. Vérifie aucune `ScheduleException` ne couvre la date.
+3. Récupère `ServiceWindow` actives pour le jour ISO 1-7.
+4. Pour chaque window, génère slots tous les `slot_interval_min` entre `startTime` et `endTime` **inclus**.
+5. Pour chaque slot, somme `partySize` des bookings PENDING+CONFIRMED qui chevauchent (occupation = `default_meal_duration_min`).
+6. Slot dispo si `Σ partySize + N ≤ capacity_max`.
+7. Si date = aujourd'hui, drop slots avant `now + cutoff_hours`.
 
-**The same check runs server-side again on `POST /bookings`** to prevent race conditions (two clients booking the same slot simultaneously). Do not remove this double-check.
+**Double-check serveur sur `POST /bookings`** (race condition guard).
 
-Slot duration comes from `Service.duration` and is snapshotted into `Booking.duration` at creation time (so later service edits don't retroactively change past bookings).
+### Confirmation policy
 
-### Email-based booking actions
+- `partySize ≤ auto_confirm_threshold` → CONFIRMED direct + mail récap client + alerte admin
+- `partySize > auto_confirm_threshold` → PENDING + mail "demande reçue" client + alerte admin → admin valide → mail "confirmation après pending"
 
-Bookings generate unguessable `cancelToken` (always) and `confirmToken` (when needed). The public endpoints `GET /bookings/:cancelToken/cancel` and `GET /bookings/:confirmToken/confirm` are designed to be clicked from emails — no auth required, the token *is* the credential. Treat these tokens as secrets in logs.
+### Email templates (9)
 
-### Frontend (Nuxt 3) — single app, two zones
+`apps/backend/src/modules/notifications/templates/*.html` avec interpolation `{{var}}` et conditional `{{#var}}…{{/var}}` :
 
-`apps/frontend/` is Nuxt 3 with Tailwind + VueUse. It calls the backend via `NUXT_PUBLIC_API_URL` (default `http://localhost:3101`). One app serves **two zones** with different behaviour, configured in `nuxt.config.ts` via `routeRules`:
+- booking-confirmed
+- booking-pending
+- booking-admin-alert
+- booking-confirmed-after-pending
+- booking-cancelled-by-admin
+- booking-cancelled-by-client
+- booking-cancelled-admin-notify
+- booking-reminder (cron J-1, `0 10 * * *` Europe/Paris)
+- contact-message-alert
 
-- **Public zone** — `pages/[slug]/**`: SSR enabled (SEO-critical). `index.vue` (landing + SEO/JSON-LD), `reservation/` (3-step booking tunnel), `avis/` (review form). Pages do not declare a layout, so they render their own full-page template. Dynamic primary color is injected at runtime from `business.config.couleur` via `app.vue`.
-- **Admin zone** — `pages/admin/**`: SPA (`ssr: false`) with `X-Robots-Tag: noindex, nofollow`. Pages use `definePageMeta({ layout: 'admin', middleware: 'admin-auth' })`. The layout `layouts/admin.vue` renders the sidebar shell; `layouts/admin-auth.vue` is the minimal login wrapper. The `admin-auth` middleware reads JWT from localStorage and is gated behind `import.meta.server` so it no-ops during SSR.
+### Mailer
 
-Shared infrastructure (both zones):
-- `composables/useAuth.ts` — wraps `$fetch` as `apiFetch` (injects Bearer token, handles refresh). SSR-safe: `getAuthHeader` returns `{}` on the server.
-- `composables/useToast.ts` — global toast state.
-- `components/admin/**` — admin-only UI (`AdminStatusBadge`, `AdminStatCard`, `AdminServiceForm`).
-- `app.vue` — wraps `<NuxtPage />` in `<NuxtLayout>` so `definePageMeta({ layout })` applies. Missing this wrapper silently breaks layout resolution.
+`NotificationsModule` injecte `MAILER_PROVIDER` via factory : `NodemailerProvider` en dev (MailHog), `ResendProvider` en prod (SDK officiel).
 
-`typescript.typeCheck` is currently `false` because pre-existing `node_modules` type errors (Map/Set/Iterable) crash `vue-tsc`. Re-enable once the base tsconfig `lib` is fixed.
+### Sécurité
 
-The shared package `@booking-resto/shared` exports DTO/entity types consumed by the frontend; after editing it, rebuild it (`pnpm --filter shared build`) so Nuxt picks up the new `dist/`.
+- Helmet + CORP `cross-origin` (pour servir images/PDFs cross-port en dev)
+- CORS allow-list : dev `^http://localhost:\d+$`, prod `FRONTEND_URL`
+- JWT access+refresh, bcrypt rounds 12
+- `ValidationPipe` global (whitelist + forbidNonWhitelisted + transform)
+- Rate-limit global 100/min, 5/min sur POST /bookings, 3/min sur POST /contact-messages
+- Captcha HMAC signé pour `POST /contact-messages`
+- Upload images/PDFs : whitelist mimeType + magic-bytes check (4 octets)
+
+### Frontend
+
+- Layout `default` (header + footer) pour public, layout `admin` (sidebar + bottom-nav mobile) pour admin
+- Theming "Atelier" hérité (palette terre/crème, fonts Fraunces + DM Sans), modifiable dans `tailwind.config.ts` par fork
+- Composables : `useAuth` (JWT localStorage), `useToast`, `useImageUpload`, `useSettings`, `useReservationFlow`
+- Public utilise `useFetch` SSR, admin utilise `apiFetch` (JWT injection)
+- `pages/admin/**` ont `ssr: false` + `definePageMeta({ middleware: 'admin-auth' })`
 
 ## Stack summary
 
-NestJS 10 · Prisma 5 · PostgreSQL 16 · Nuxt 3.12 · Vue 3.4 · Tailwind 3.4 · JWT + bcrypt · Nodemailer · Swagger · TypeScript 5.4 strict · pnpm 9 workspaces · Node ≥ 20.
+NestJS 10 · Prisma 5 · PostgreSQL 16 · Nuxt 3.12 · Vue 3.4 · Tailwind 3.4 · JWT + bcrypt · Nodemailer · Resend · `@nestjs/schedule` · Swagger · TypeScript 5.4 strict · pnpm 9 workspaces · Node ≥ 20.
+
+## Hors scope (par design)
+
+Stripe, SMS, multi-langue, gestion staff/serveurs, table-spécifique (capacité globale uniquement), reviews internes (les restos utilisent Google Reviews), theming via UI admin, tests E2E. Voir spec §15.
