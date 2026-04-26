@@ -1,5 +1,5 @@
 // ============================================================
-// Booking Pro — Schéma Prisma (mono-tenant)
+// Booking Resto — Schéma Prisma (mono-tenant, mono-vertical resto)
 // Base: PostgreSQL 16
 // ============================================================
 
@@ -12,103 +12,148 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ── Service ──────────────────────────────────────────────────
-model Service {
-  id          String   @id @default(cuid())
-  name        String
-  description String?  @db.Text
-  duration    Int                           // durée en minutes
-  price       Float                         // prix en euros
-  category    String?
-  isActive    Boolean  @default(true)
-  sortOrder   Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  bookings Booking[]
-
-  @@index([isActive])
-  @@map("services")
-}
-
-// ── Booking ──────────────────────────────────────────────────
+// ── Booking ─────────────────────────────────────────────────
 model Booking {
-  id          String        @id @default(cuid())
-  serviceId   String
-  // Infos client
-  clientName  String
-  clientEmail String
-  clientPhone String
-  // Rendez-vous
-  date        DateTime                      // datetime UTC du début du RDV
-  duration    Int                           // durée réelle (snapshot du service)
+  id              String        @id @default(cuid())
+  partySize       Int
+  date            DateTime
+  serviceWindowId String?
+  // Client
+  clientName      String
+  clientEmail     String
+  clientPhone     String
+  notes           String?       @db.Text
   // Statut
-  status      BookingStatus @default(PENDING)
-  notes       String?       @db.Text
-  // Paiement
-  paymentStatus   PaymentStatus @default(UNPAID)
-  stripeSessionId String?
-  amount          Float?                    // montant payé en euros
-  // Tokens de sécurité (liens email)
-  cancelToken  String        @unique @default(cuid())
-  confirmToken String?       @unique
-  // Timestamps d'actions
-  confirmedAt  DateTime?
-  cancelledAt  DateTime?
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  status          BookingStatus @default(PENDING)
+  // Tokens email
+  cancelToken     String        @unique @default(cuid())
+  confirmToken    String?       @unique
+  // Timestamps
+  confirmedAt     DateTime?
+  cancelledAt     DateTime?
+  reminderSentAt  DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 
-  service Service @relation(fields: [serviceId], references: [id])
+  serviceWindow ServiceWindow? @relation(fields: [serviceWindowId], references: [id], onDelete: SetNull)
 
   @@index([date])
   @@index([status])
   @@index([cancelToken])
   @@index([confirmToken])
+  @@index([reminderSentAt])
   @@map("bookings")
 }
 
-// ── Availability (horaires récurrents) ───────────────────────
-model Availability {
-  id        String  @id @default(cuid())
-  dayOfWeek Int     @unique                 // 0=lundi, 1=mardi, ..., 6=dimanche
-  startTime String                          // "09:00" format HH:mm
-  endTime   String                          // "19:00" format HH:mm
-  isActive  Boolean @default(true)
+// ── ServiceWindow (plages de service récurrentes) ────────────
+model ServiceWindow {
+  id         String   @id @default(cuid())
+  label      String
+  daysOfWeek Int[]                                    // ISO 1=lun..7=dim
+  startTime  String                                   // "HH:mm"
+  endTime    String
+  isActive   Boolean  @default(true)
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  @@map("availability")
+  bookings Booking[]
+
+  @@map("service_windows")
 }
 
-// ── BlockedSlot (exceptions ponctuelles) ─────────────────────
-model BlockedSlot {
+// ── ScheduleException (fermetures ponctuelles) ───────────────
+model ScheduleException {
   id        String   @id @default(cuid())
-  date      DateTime @db.Date              // date uniquement (sans heure)
-  startTime String                         // "09:00" format HH:mm
-  endTime   String                         // "19:00" format HH:mm
+  startDate DateTime @db.Date
+  endDate   DateTime @db.Date
   reason    String?
   createdAt DateTime @default(now())
 
-  @@index([date])
-  @@map("blocked_slots")
+  @@index([startDate, endDate])
+  @@map("schedule_exceptions")
 }
 
-// ── Review ───────────────────────────────────────────────────
-model Review {
-  id         String   @id @default(cuid())
-  author     String
-  rating     Int                           // 1 à 5
-  comment    String?  @db.Text
-  isApproved Boolean  @default(false)
-  createdAt  DateTime @default(now())
+// ── HomeSection (sections éditoriales home) ─────────────────
+model HomeSection {
+  id          String   @id @default(cuid())
+  title       String
+  body        String   @db.Text
+  imageId     String?
+  sortOrder   Int      @default(0)
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  @@index([isApproved])
-  @@map("reviews")
+  image Image? @relation(fields: [imageId], references: [id], onDelete: SetNull)
+
+  @@index([sortOrder])
+  @@map("home_sections")
 }
 
-// ── User (admin / manager du site) ───────────────────────────
+// ── MenuDocument (page /menu : menus midi/soir/carte) ───────
+model MenuDocument {
+  id          String   @id @default(cuid())
+  title       String
+  description String?  @db.Text
+  fileId      String
+  sortOrder   Int      @default(0)
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  file Image @relation(fields: [fileId], references: [id], onDelete: Restrict)
+
+  @@map("menu_documents")
+}
+
+// ── ContactMessage (formulaire contact home) ────────────────
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  message   String   @db.Text
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([isRead, createdAt])
+  @@map("contact_messages")
+}
+
+// ── Image (Postgres bytea, accepte images ET PDFs) ──────────
+model Image {
+  id        String       @id @default(cuid())
+  section   ImageSection
+  sortOrder Int          @default(0)
+  caption   String?
+  mimeType  String                                    // image/* OU application/pdf
+  width     Int?                                      // null si PDF
+  height    Int?                                      // null si PDF
+  size      Int
+  data      Bytes
+  createdAt DateTime     @default(now())
+
+  homeSections  HomeSection[]
+  menuDocuments MenuDocument[]
+
+  @@index([section, sortOrder])
+  @@map("images")
+}
+
+// ── Setting (paramètres globaux clé/valeur) ─────────────────
+model Setting {
+  key       String   @id
+  value     String   @db.Text
+  updatedAt DateTime @updatedAt
+
+  @@map("settings")
+}
+
+// ── User (admin) ────────────────────────────────────────────
 model User {
   id           String    @id @default(cuid())
   email        String    @unique
-  passwordHash String                      // bcrypt hash (rounds: 12)
+  passwordHash String
   role         UserRole  @default(ADMIN)
   lastLoginAt  DateTime?
   createdAt    DateTime  @default(now())
@@ -117,23 +162,24 @@ model User {
   @@map("users")
 }
 
-// ── Enums ────────────────────────────────────────────────────
+// ── Enums ───────────────────────────────────────────────────
 
 enum BookingStatus {
-  PENDING     // En attente de confirmation
-  CONFIRMED   // Confirmé
-  CANCELLED   // Annulé
-  COMPLETED   // RDV passé et complété
-  NO_SHOW     // Client ne s'est pas présenté
-}
-
-enum PaymentStatus {
-  UNPAID    // Paiement non requis ou non effectué
-  PAID      // Paiement reçu
-  REFUNDED  // Remboursé
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+  NO_SHOW
 }
 
 enum UserRole {
-  ADMIN    // Accès total
-  MANAGER  // Accès limité (pas de paramètres critiques)
+  ADMIN
+  MANAGER
+}
+
+enum ImageSection {
+  HERO
+  HOMESECTION
+  MENU
+  OTHER
 }
