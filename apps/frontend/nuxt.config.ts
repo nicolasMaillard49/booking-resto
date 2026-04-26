@@ -5,6 +5,12 @@ export default defineNuxtConfig({
 
   modules: ['@nuxtjs/tailwindcss', '@vueuse/nuxt'],
 
+  components: [
+    { path: '~/components', pathPrefix: false },
+    { path: '~/components/public', pathPrefix: false },
+    { path: '~/components/admin', prefix: 'Admin' },
+  ],
+
   css: ['~/assets/css/main.css'],
 
   runtimeConfig: {
