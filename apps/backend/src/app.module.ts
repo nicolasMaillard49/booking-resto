@@ -5,23 +5,14 @@ import { APP_GUARD } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './modules/auth/auth.module';
-import { ServicesModule } from './modules/services/services.module';
-import { BookingsModule } from './modules/bookings/bookings.module';
-import { ReviewsModule } from './modules/reviews/reviews.module';
-import { AvailabilityModule } from './modules/availability/availability.module';
-import { NotificationsModule } from './modules/notifications/notifications.module';
-import { StatsModule } from './modules/stats/stats.module';
-import { PublicModule } from './modules/public/public.module';
 
 @Module({
   imports: [
-    // Configuration centralisée depuis .env
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
     }),
 
-    // Rate limiting global: 100 req/min par IP
     ThrottlerModule.forRoot([
       {
         name: 'global',
@@ -32,13 +23,12 @@ import { PublicModule } from './modules/public/public.module';
 
     PrismaModule,
     AuthModule,
-    ServicesModule,
-    BookingsModule,
-    ReviewsModule,
-    AvailabilityModule,
-    NotificationsModule,
-    StatsModule,
-    PublicModule,
+    // Resto modules — wired in later milestones :
+    // SettingsModule (M1.7)
+    // ServiceWindowsModule (M3.2), ScheduleExceptionsModule (M3.4)
+    // NotificationsModule (M4.9), BookingsModule (M2.7 - depends on above)
+    // HomeSectionsModule (M5.2), MenuDocumentsModule (M5.4), ContactMessagesModule (M5.7)
+    // ImagesModule (M4.2), PublicModule (M6.1), StatsModule (M6.2)
   ],
   controllers: [AppController],
   providers: [

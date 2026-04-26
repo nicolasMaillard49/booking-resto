@@ -1,12 +1,9 @@
 import { Module } from '@nestjs/common';
 import { PublicController } from './public.controller';
-import { ServicesModule } from '../services/services.module';
-import { AvailabilityModule } from '../availability/availability.module';
-import { BookingsModule } from '../bookings/bookings.module';
-import { ReviewsModule } from '../reviews/reviews.module';
 
+// NOTE: stub for M1.4 — will be re-wired in M6.1 with new dependencies
+// (Settings, ServiceWindows, HomeSections, MenuDocuments, Bookings)
 @Module({
-  imports: [ServicesModule, AvailabilityModule, BookingsModule, ReviewsModule],
   controllers: [PublicController],
 })
 export class PublicModule {}

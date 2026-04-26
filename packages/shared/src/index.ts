@@ -3,8 +3,6 @@
 // Utilisé par le backend (NestJS) et le frontend (Nuxt)
 // ============================================================
 
-export * from './site';
-
 // ── Enums ────────────────────────────────────────────────────
 
 export enum BookingStatus {
@@ -15,70 +13,83 @@ export enum BookingStatus {
   NO_SHOW = 'NO_SHOW',
 }
 
-export enum PaymentStatus {
-  UNPAID = 'UNPAID',
-  PAID = 'PAID',
-  REFUNDED = 'REFUNDED',
-}
-
 export enum UserRole {
   ADMIN = 'ADMIN',
   MANAGER = 'MANAGER',
 }
 
-// ── Service ──────────────────────────────────────────────────
-
-export interface ServicePublic {
-  id: string;
-  name: string;
-  description: string | null;
-  duration: number;       // minutes
-  price: number;          // euros
-  category: string | null;
-  sortOrder: number;
+export enum ImageSection {
+  HERO = 'HERO',
+  HOMESECTION = 'HOMESECTION',
+  MENU = 'MENU',
+  OTHER = 'OTHER',
 }
 
 // ── Booking ──────────────────────────────────────────────────
 
 export interface BookingPublic {
   id: string;
-  service: ServicePublic;
+  partySize: number;
+  date: string;                       // ISO 8601
+  serviceWindowId: string | null;
   clientName: string;
   clientEmail: string;
   clientPhone: string;
-  date: string;           // ISO 8601
-  duration: number;
-  status: BookingStatus;
   notes: string | null;
-  paymentStatus: PaymentStatus;
-  amount: number | null;
+  status: BookingStatus;
   cancelToken: string;
   confirmedAt: string | null;
   cancelledAt: string | null;
   createdAt: string;
 }
 
-// ── Availability ─────────────────────────────────────────────
+// ── ServiceWindow ────────────────────────────────────────────
 
-export interface AvailabilitySlot {
-  time: string;           // "09:00"
-  available: boolean;
-}
-
-export interface DaySchedule {
-  dayOfWeek: number;      // 0=lundi ... 6=dimanche
-  startTime: string;      // "09:00"
-  endTime: string;        // "19:00"
-  isActive: boolean;
-}
-
-// ── Review ───────────────────────────────────────────────────
-
-export interface ReviewPublic {
+export interface ServiceWindowPublic {
   id: string;
-  author: string;
-  rating: number;         // 1-5
-  comment: string | null;
+  label: string;
+  daysOfWeek: number[];               // ISO 1=lun..7=dim
+  startTime: string;
+  endTime: string;
+  isActive: boolean;
+  sortOrder: number;
+}
+
+// ── Slots (résultat /public/availability-slots) ──────────────
+
+export interface AvailableSlot {
+  time: string;                       // "HH:mm"
+  serviceWindowId: string;
+  serviceWindowLabel: string;
+  date: string;                       // YYYY-MM-DD
+}
+
+// ── HomeSection / MenuDocument / ContactMessage ──────────────
+
+export interface HomeSectionPublic {
+  id: string;
+  title: string;
+  body: string;
+  image: { id: string; mimeType: string; width: number | null; height: number | null } | null;
+  sortOrder: number;
+  isPublished: boolean;
+}
+
+export interface MenuDocumentPublic {
+  id: string;
+  title: string;
+  description: string | null;
+  file: { id: string; mimeType: string; size: number };
+  sortOrder: number;
+  isPublished: boolean;
+}
+
+export interface ContactMessagePublic {
+  id: string;
+  name: string;
+  email: string;
+  message: string;
+  isRead: boolean;
   createdAt: string;
 }
 
