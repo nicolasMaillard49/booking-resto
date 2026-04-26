@@ -6,7 +6,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
-import { siteConfig } from '@booking-pro/shared';
+import { siteConfig } from '@booking-resto/shared';
 
 interface BookingEmailData {
   id: string;

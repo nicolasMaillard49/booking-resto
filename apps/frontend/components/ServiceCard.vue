@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ServicePublic } from '@booking-pro/shared'
+import type { ServicePublic } from '@booking-resto/shared'
 
 defineProps<{
   service: ServicePublic

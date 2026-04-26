@@ -1,7 +1,7 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'admin', middleware: 'admin-auth' })
 
-import type { BookingStatus } from '@booking-pro/shared'
+import type { BookingStatus } from '@booking-resto/shared'
 
 const { apiFetch } = useAuth()
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { ServicePublic, ReviewPublic, DaySchedule } from '@booking-pro/shared'
-import { siteConfig } from '@booking-pro/shared'
+import type { ServicePublic, ReviewPublic, DaySchedule } from '@booking-resto/shared'
+import { siteConfig } from '@booking-resto/shared'
 
 const config = useRuntimeConfig()
 const baseUrl = config.public.apiUrl

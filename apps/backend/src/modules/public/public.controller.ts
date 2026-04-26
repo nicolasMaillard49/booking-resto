@@ -1,6 +1,6 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiQuery } from '@nestjs/swagger';
-import { siteConfig } from '@booking-pro/shared';
+import { siteConfig } from '@booking-resto/shared';
 import { ServicesService } from '../services/services.service';
 import { AvailabilityService } from '../availability/availability.service';
 import { BookingsService } from '../bookings/bookings.service';

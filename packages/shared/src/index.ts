@@ -1,5 +1,5 @@
 // ============================================================
-// @booking-pro/shared — Types TypeScript partagés
+// @booking-resto/shared — Types TypeScript partagés
 // Utilisé par le backend (NestJS) et le frontend (Nuxt)
 // ============================================================
 

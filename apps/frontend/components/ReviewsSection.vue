@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ReviewPublic } from '@booking-pro/shared'
+import type { ReviewPublic } from '@booking-resto/shared'
 
 defineProps<{ reviews: ReviewPublic[] }>()
 

@@ -17,7 +17,7 @@
     "strictBindCallApply": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@booking-pro/shared": ["../../packages/shared/dist/cjs/index.d.ts"]
+      "@booking-resto/shared": ["../../packages/shared/dist/cjs/index.d.ts"]
     }
   },
   "exclude": ["node_modules", "dist", "test"]

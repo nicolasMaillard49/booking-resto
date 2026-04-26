@@ -1,8 +1,8 @@
 {
-  "name": "booking-pro",
-  "version": "1.0.0",
+  "name": "booking-resto",
+  "version": "0.1.0",
   "private": true,
-  "description": "Système de réservation en ligne complet pour artisans et prestataires de services",
+  "description": "Template de site restaurant avec réservation en ligne (table-only, capacité globale, services midi/soir, page éditoriale)",
   "workspaces": [
     "apps/*",
     "packages/*"

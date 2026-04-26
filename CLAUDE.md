@@ -15,13 +15,13 @@ apps/
              ├─ /[slug]      SSR public zone (dynamic business routes)
              └─ /admin/**    SPA admin zone (ssr: false, noindex)
 packages/
-  prisma/    schema.prisma + migrations + seed (package name: @booking-pro/prisma)
-  shared/    TypeScript types shared across apps (package name: @booking-pro/shared)
+  prisma/    schema.prisma + migrations + seed (package name: @booking-resto/prisma)
+  shared/    TypeScript types shared across apps (package name: @booking-resto/shared)
 ```
 
 The admin panel was originally a separate Nuxt app (`apps/admin`) but was merged into `apps/frontend` as a zone. The split is now done via Nuxt `routeRules` in `apps/frontend/nuxt.config.ts`: `/admin/**` disables SSR and adds `X-Robots-Tag: noindex, nofollow`.
 
-Workspaces are declared in `pnpm-workspace.yaml` / root `package.json`. Apps import shared types via `@booking-pro/shared` (which compiles to `dist/` — run `pnpm --filter shared build` if types get stale).
+Workspaces are declared in `pnpm-workspace.yaml` / root `package.json`. Apps import shared types via `@booking-resto/shared` (which compiles to `dist/` — run `pnpm --filter shared build` if types get stale).
 
 ## Common commands
 
@@ -149,7 +149,7 @@ Shared infrastructure (both zones):
 
 `typescript.typeCheck` is currently `false` because pre-existing `node_modules` type errors (Map/Set/Iterable) crash `vue-tsc`. Re-enable once the base tsconfig `lib` is fixed.
 
-The shared package `@booking-pro/shared` exports DTO/entity types consumed by the frontend; after editing it, rebuild it (`pnpm --filter shared build`) so Nuxt picks up the new `dist/`.
+The shared package `@booking-resto/shared` exports DTO/entity types consumed by the frontend; after editing it, rebuild it (`pnpm --filter shared build`) so Nuxt picks up the new `dist/`.
 
 ## Stack summary
 

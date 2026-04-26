@@ -3,10 +3,10 @@ version: '3.8'
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: booking_pro_db
+    container_name: booking_resto_db
     restart: unless-stopped
     environment:
-      POSTGRES_DB: booking_pro
+      POSTGRES_DB: booking_resto
       POSTGRES_USER: booking
       POSTGRES_PASSWORD: booking123
     ports:
@@ -14,7 +14,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U booking -d booking_pro"]
+      test: ["CMD-SHELL", "pg_isready -U booking -d booking_resto"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -23,13 +23,13 @@ services:
     build:
       context: ./apps/backend
       dockerfile: Dockerfile
-    container_name: booking_pro_backend
+    container_name: booking_resto_backend
     restart: unless-stopped
     ports:
       - "3001:3001"
     environment:
       NODE_ENV: development
-      DATABASE_URL: postgresql://booking:booking123@postgres:5432/booking_pro
+      DATABASE_URL: postgresql://booking:booking123@postgres:5432/booking_resto
       JWT_SECRET: dev-secret-change-in-prod-must-be-long
       JWT_REFRESH_SECRET: dev-refresh-secret-change-in-prod
       JWT_EXPIRES_IN: 1h
@@ -52,7 +52,7 @@ services:
     build:
       context: ./apps/frontend
       dockerfile: Dockerfile
-    container_name: booking_pro_frontend
+    container_name: booking_resto_frontend
     restart: unless-stopped
     ports:
       - "3000:3000"
@@ -63,7 +63,7 @@ services:
   # Serveur mail de dev (interface web sur :8025)
   mailhog:
     image: mailhog/mailhog:latest
-    container_name: booking_pro_mail
+    container_name: booking_resto_mail
     ports:
       - "1025:1025"
       - "8025:8025"

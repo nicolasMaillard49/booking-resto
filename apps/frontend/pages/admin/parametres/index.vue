@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { siteConfig } from '@booking-pro/shared'
+import { siteConfig } from '@booking-resto/shared'
 
 definePageMeta({ layout: 'admin', middleware: 'admin-auth' })
 </script>

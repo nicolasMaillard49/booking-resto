@@ -1,6 +1,6 @@
 // ============================================================
 // Seed — Données de démo
-// Usage: pnpm --filter @booking-pro/prisma seed
+// Usage: pnpm --filter @booking-resto/prisma seed
 // ============================================================
 
 import { PrismaClient, BookingStatus, PaymentStatus } from '@prisma/client';
