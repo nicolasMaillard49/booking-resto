@@ -1,9 +1,13 @@
 import { Module } from '@nestjs/common';
+import { SettingsModule } from '../settings/settings.module';
+import { ServiceWindowsModule } from '../service-windows/service-windows.module';
+import { HomeSectionsModule } from '../home-sections/home-sections.module';
+import { MenuDocumentsModule } from '../menu-documents/menu-documents.module';
+import { BookingsModule } from '../bookings/bookings.module';
 import { PublicController } from './public.controller';
 
-// NOTE: stub for M1.4 — will be re-wired in M6.1 with new dependencies
-// (Settings, ServiceWindows, HomeSections, MenuDocuments, Bookings)
 @Module({
+  imports: [SettingsModule, ServiceWindowsModule, HomeSectionsModule, MenuDocumentsModule, BookingsModule],
   controllers: [PublicController],
 })
 export class PublicModule {}

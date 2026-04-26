@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head><meta charset="utf-8"></head>
+<body style="font-family: Inter, system-ui, sans-serif; color: #1a1a1a; max-width: 560px; margin: 0 auto; padding: 24px;">
+  <h1 style="font-family: Georgia, serif; font-size: 24px;">{{brandName}}</h1>
+  <h2>Votre demande est confirmée</h2>
+  <p>Bonjour {{clientName}},</p>
+  <p>Bonne nouvelle ! Votre demande pour <strong>{{partySize}} couverts</strong> le <strong>{{dateFormatted}}</strong> à <strong>{{timeFormatted}}</strong> ({{serviceWindowLabel}}) est confirmée.</p>
+  {{#notes}}<p><em>Vos notes :</em> {{notes}}</p>{{/notes}}
+  <p>Adresse : {{contactAddress}} · Tél : {{contactPhone}}</p>
+  <p>En cas d'imprévu : <a href="{{cancelUrl}}">Annuler la réservation</a></p>
+  <p style="color: #888; font-size: 12px; margin-top: 32px;">{{brandName}} — {{contactAddress}}</p>
+</body>
+</html>
