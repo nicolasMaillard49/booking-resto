@@ -1,0 +1,139 @@
+// ============================================================
+// Booking Pro — Schéma Prisma (mono-tenant)
+// Base: PostgreSQL 16
+// ============================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ── Service ──────────────────────────────────────────────────
+model Service {
+  id          String   @id @default(cuid())
+  name        String
+  description String?  @db.Text
+  duration    Int                           // durée en minutes
+  price       Float                         // prix en euros
+  category    String?
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  bookings Booking[]
+
+  @@index([isActive])
+  @@map("services")
+}
+
+// ── Booking ──────────────────────────────────────────────────
+model Booking {
+  id          String        @id @default(cuid())
+  serviceId   String
+  // Infos client
+  clientName  String
+  clientEmail String
+  clientPhone String
+  // Rendez-vous
+  date        DateTime                      // datetime UTC du début du RDV
+  duration    Int                           // durée réelle (snapshot du service)
+  // Statut
+  status      BookingStatus @default(PENDING)
+  notes       String?       @db.Text
+  // Paiement
+  paymentStatus   PaymentStatus @default(UNPAID)
+  stripeSessionId String?
+  amount          Float?                    // montant payé en euros
+  // Tokens de sécurité (liens email)
+  cancelToken  String        @unique @default(cuid())
+  confirmToken String?       @unique
+  // Timestamps d'actions
+  confirmedAt  DateTime?
+  cancelledAt  DateTime?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  service Service @relation(fields: [serviceId], references: [id])
+
+  @@index([date])
+  @@index([status])
+  @@index([cancelToken])
+  @@index([confirmToken])
+  @@map("bookings")
+}
+
+// ── Availability (horaires récurrents) ───────────────────────
+model Availability {
+  id        String  @id @default(cuid())
+  dayOfWeek Int     @unique                 // 0=lundi, 1=mardi, ..., 6=dimanche
+  startTime String                          // "09:00" format HH:mm
+  endTime   String                          // "19:00" format HH:mm
+  isActive  Boolean @default(true)
+
+  @@map("availability")
+}
+
+// ── BlockedSlot (exceptions ponctuelles) ─────────────────────
+model BlockedSlot {
+  id        String   @id @default(cuid())
+  date      DateTime @db.Date              // date uniquement (sans heure)
+  startTime String                         // "09:00" format HH:mm
+  endTime   String                         // "19:00" format HH:mm
+  reason    String?
+  createdAt DateTime @default(now())
+
+  @@index([date])
+  @@map("blocked_slots")
+}
+
+// ── Review ───────────────────────────────────────────────────
+model Review {
+  id         String   @id @default(cuid())
+  author     String
+  rating     Int                           // 1 à 5
+  comment    String?  @db.Text
+  isApproved Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  @@index([isApproved])
+  @@map("reviews")
+}
+
+// ── User (admin / manager du site) ───────────────────────────
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String                      // bcrypt hash (rounds: 12)
+  role         UserRole  @default(ADMIN)
+  lastLoginAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@map("users")
+}
+
+// ── Enums ────────────────────────────────────────────────────
+
+enum BookingStatus {
+  PENDING     // En attente de confirmation
+  CONFIRMED   // Confirmé
+  CANCELLED   // Annulé
+  COMPLETED   // RDV passé et complété
+  NO_SHOW     // Client ne s'est pas présenté
+}
+
+enum PaymentStatus {
+  UNPAID    // Paiement non requis ou non effectué
+  PAID      // Paiement reçu
+  REFUNDED  // Remboursé
+}
+
+enum UserRole {
+  ADMIN    // Accès total
+  MANAGER  // Accès limité (pas de paramètres critiques)
+}

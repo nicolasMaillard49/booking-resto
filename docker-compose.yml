@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: booking_pro_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: booking_pro
+      POSTGRES_USER: booking
+      POSTGRES_PASSWORD: booking123
+    ports:
+      - "5440:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U booking -d booking_pro"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./apps/backend
+      dockerfile: Dockerfile
+    container_name: booking_pro_backend
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://booking:booking123@postgres:5432/booking_pro
+      JWT_SECRET: dev-secret-change-in-prod-must-be-long
+      JWT_REFRESH_SECRET: dev-refresh-secret-change-in-prod
+      JWT_EXPIRES_IN: 1h
+      JWT_REFRESH_EXPIRES_IN: 7d
+      FRONTEND_URL: http://localhost:3000
+      PORT: 3001
+      SMTP_HOST: mailhog
+      SMTP_PORT: 1025
+      SMTP_SECURE: "false"
+      SMTP_USER: ""
+      SMTP_PASS: ""
+      EMAIL_FROM: "Booking Pro <noreply@bookingpro.fr>"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./apps/backend/src:/app/src
+
+  frontend:
+    build:
+      context: ./apps/frontend
+      dockerfile: Dockerfile
+    container_name: booking_pro_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NUXT_PUBLIC_API_URL: http://localhost:3001
+      NUXT_PUBLIC_SITE_URL: http://localhost:3000
+
+  # Serveur mail de dev (interface web sur :8025)
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: booking_pro_mail
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+volumes:
+  postgres_data:
