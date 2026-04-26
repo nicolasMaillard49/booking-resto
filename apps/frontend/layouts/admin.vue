@@ -2,10 +2,11 @@
 import {
   LayoutDashboard,
   CalendarDays,
-  CalendarClock,
-  Scissors,
   Clock,
-  Star,
+  Home,
+  Utensils,
+  Mail,
+  ImageIcon,
   Settings,
   LogOut,
   Menu,
@@ -18,10 +19,11 @@ const route = useRoute()
 const navItems = [
   { path: '/admin', icon: LayoutDashboard, label: 'Dashboard' },
   { path: '/admin/reservations', icon: CalendarDays, label: 'Réservations' },
-  { path: '/admin/agenda', icon: CalendarClock, label: 'Agenda' },
-  { path: '/admin/services', icon: Scissors, label: 'Services' },
   { path: '/admin/horaires', icon: Clock, label: 'Horaires' },
-  { path: '/admin/avis', icon: Star, label: 'Avis' },
+  { path: '/admin/home', icon: Home, label: 'Accueil' },
+  { path: '/admin/menu', icon: Utensils, label: 'Menu' },
+  { path: '/admin/messages', icon: Mail, label: 'Messages' },
+  { path: '/admin/images', icon: ImageIcon, label: 'Images' },
   { path: '/admin/parametres', icon: Settings, label: 'Paramètres' },
 ]
 
@@ -59,7 +61,7 @@ watch(() => route.path, () => {
       <!-- Header sidebar -->
       <div class="px-5 py-5 border-b border-neutral-100 flex items-center justify-between">
         <div class="min-w-0">
-          <p class="font-bold text-neutral-900 text-base">Booking Pro</p>
+          <p class="font-bold text-neutral-900 text-base">Booking Resto</p>
           <p class="text-xs text-neutral-400 truncate">{{ currentUser?.email }}</p>
         </div>
         <button
@@ -120,7 +122,7 @@ watch(() => route.path, () => {
         >
           <Menu :size="22" />
         </button>
-        <p class="font-bold text-neutral-900 text-sm">Booking Pro</p>
+        <p class="font-bold text-neutral-900 text-sm">Booking Resto</p>
         <div class="w-10" />
       </header>
 

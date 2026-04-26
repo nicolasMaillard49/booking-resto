@@ -1,87 +1,92 @@
 <script setup lang="ts">
-import { siteConfig } from '@booking-resto/shared'
-
 definePageMeta({ layout: 'admin', middleware: 'admin-auth' })
+const { settings, load, save } = useSettings()
+const { showToast } = useToast()
+const local = reactive<Record<string, string>>({})
+const loaded = ref(false)
+const saving = ref(false)
+
+onMounted(async () => {
+  await load()
+  Object.assign(local, settings.value)
+  loaded.value = true
+})
+
+async function onSave() {
+  saving.value = true
+  try {
+    await save(local)
+    showToast('Paramètres enregistrés')
+  } catch (e: any) {
+    alert(e?.data?.message ?? 'Erreur')
+  } finally {
+    saving.value = false
+  }
+}
 </script>
 
 <template>
   <div>
     <h1 class="text-2xl font-bold text-neutral-900 mb-6">Paramètres</h1>
 
-    <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-6 text-sm text-yellow-900">
-      <p class="font-medium mb-1">Configuration mono-tenant</p>
-      <p>
-        Les paramètres du site (nom, contact, branding) sont définis dans le fichier
-        <code class="bg-yellow-100 px-1.5 py-0.5 rounded text-xs">packages/shared/src/site.ts</code>.
-        Modifier ce fichier et relancer un déploiement pour changer ces valeurs.
-      </p>
+    <div v-if="loaded" class="space-y-6 max-w-2xl">
+      <section class="bg-white border border-neutral-100 rounded-xl p-5 sm:p-6 space-y-4">
+        <h2 class="text-lg font-semibold mb-2">Réservations</h2>
+        <div><label class="block text-sm mb-1">Capacité max simultanée (couverts)</label>
+          <input v-model="local.capacity_max" type="number" class="w-full px-3 py-2 border border-neutral-200 rounded-lg" /></div>
+        <div><label class="block text-sm mb-1">Durée moyenne d'un repas (min)</label>
+          <input v-model="local.default_meal_duration_min" type="number" class="w-full px-3 py-2 border border-neutral-200 rounded-lg" /></div>
+        <div><label class="block text-sm mb-1">Seuil auto-confirm (couverts)</label>
+          <input v-model="local.auto_confirm_threshold" type="number" class="w-full px-3 py-2 border border-neutral-200 rounded-lg" /></div>
+        <div><label class="block text-sm mb-1">Réservation au plus tôt (jours)</label>
+          <input v-model="local.lookahead_days" type="number" class="w-full px-3 py-2 border border-neutral-200 rounded-lg" /></div>
+        <div><label class="block text-sm mb-1">Délai minimum avant créneau (heures)</label>
+          <input v-model="local.cutoff_hours" type="number" class="w-full px-3 py-2 border border-neutral-200 rounded-lg" /></div>
+        <div><label class="block text-sm mb-1">Intervalle entre créneaux (min)</label>
+          <input v-model="local.slot_interval_min" type="number" class="w-full px-3 py-2 border border-neutral-200 rounded-lg" /></div>
+      </section>
+
+      <section class="bg-white border border-neutral-100 rounded-xl p-5 sm:p-6 space-y-4">
+        <h2 class="text-lg font-semibold mb-2">Page d'accueil</h2>
+        <div><label class="block text-sm mb-1">Titre du hero</label>
+          <input v-model="local.hero_title" class="w-full px-3 py-2 border border-neutral-200 rounded-lg" /></div>
+        <div><label class="block text-sm mb-1">Sous-titre du hero</label>
+          <input v-model="local.hero_subtitle" class="w-full px-3 py-2 border border-neutral-200 rounded-lg" /></div>
+        <div><label class="block text-sm mb-1">ID de l'image hero <span class="text-xs text-neutral-400">(uploader d'abord dans /admin/images section HERO)</span></label>
+          <input v-model="local.hero_image_id" class="w-full px-3 py-2 border border-neutral-200 rounded-lg" /></div>
+      </section>
+
+      <section class="bg-white border border-neutral-100 rounded-xl p-5 sm:p-6 space-y-4">
+        <h2 class="text-lg font-semibold mb-2">Contact</h2>
+        <div><label class="block text-sm mb-1">Nom de l'établissement</label>
+          <input v-model="local.brand_name" class="w-full px-3 py-2 border border-neutral-200 rounded-lg" /></div>
+        <div><label class="block text-sm mb-1">Adresse</label>
+          <input v-model="local.contact_address" class="w-full px-3 py-2 border border-neutral-200 rounded-lg" /></div>
+        <div><label class="block text-sm mb-1">Téléphone</label>
+          <input v-model="local.contact_phone" class="w-full px-3 py-2 border border-neutral-200 rounded-lg" /></div>
+        <div><label class="block text-sm mb-1">Email</label>
+          <input v-model="local.contact_email" type="email" class="w-full px-3 py-2 border border-neutral-200 rounded-lg" /></div>
+        <div><label class="block text-sm mb-1">Lien Google Maps (src embed)</label>
+          <input v-model="local.google_maps_embed_url" class="w-full px-3 py-2 border border-neutral-200 rounded-lg" /></div>
+        <div><label class="block text-sm mb-1">Instagram URL</label>
+          <input v-model="local.instagram_url" class="w-full px-3 py-2 border border-neutral-200 rounded-lg" /></div>
+      </section>
+
+      <section class="bg-white border border-neutral-100 rounded-xl p-5 sm:p-6 space-y-4">
+        <h2 class="text-lg font-semibold mb-2">SEO</h2>
+        <div><label class="block text-sm mb-1">Titre meta accueil</label>
+          <input v-model="local.seo_home_title" class="w-full px-3 py-2 border border-neutral-200 rounded-lg" /></div>
+        <div><label class="block text-sm mb-1">Description meta accueil</label>
+          <input v-model="local.seo_home_description" class="w-full px-3 py-2 border border-neutral-200 rounded-lg" /></div>
+        <div><label class="block text-sm mb-1">Titre meta menu</label>
+          <input v-model="local.seo_menu_title" class="w-full px-3 py-2 border border-neutral-200 rounded-lg" /></div>
+        <div><label class="block text-sm mb-1">Description meta menu</label>
+          <input v-model="local.seo_menu_description" class="w-full px-3 py-2 border border-neutral-200 rounded-lg" /></div>
+      </section>
+
+      <button @click="onSave" :disabled="saving" class="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50">
+        {{ saving ? 'Enregistrement…' : 'Enregistrer' }}
+      </button>
     </div>
-
-    <div class="bg-white rounded-xl border border-neutral-100 p-6 space-y-6 max-w-2xl">
-      <div>
-        <h2 class="font-semibold text-neutral-900 mb-3">Identité</h2>
-        <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-          <div>
-            <dt class="text-neutral-500">Nom</dt>
-            <dd class="font-medium text-neutral-800">{{ siteConfig.name }}</dd>
-          </div>
-          <div>
-            <dt class="text-neutral-500">Type</dt>
-            <dd class="font-medium text-neutral-800 capitalize">{{ siteConfig.type }}</dd>
-          </div>
-          <div class="sm:col-span-2">
-            <dt class="text-neutral-500">Description</dt>
-            <dd class="font-medium text-neutral-800">{{ siteConfig.description }}</dd>
-          </div>
-        </dl>
-      </div>
-
-      <hr class="border-neutral-100" />
-
-      <div>
-        <h2 class="font-semibold text-neutral-900 mb-3">Contact</h2>
-        <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-          <div>
-            <dt class="text-neutral-500">Téléphone</dt>
-            <dd class="font-medium text-neutral-800">{{ siteConfig.contact.phone }}</dd>
-          </div>
-          <div>
-            <dt class="text-neutral-500">Email</dt>
-            <dd class="font-medium text-neutral-800">{{ siteConfig.contact.email }}</dd>
-          </div>
-          <div>
-            <dt class="text-neutral-500">Adresse</dt>
-            <dd class="font-medium text-neutral-800">{{ siteConfig.contact.address }}</dd>
-          </div>
-          <div>
-            <dt class="text-neutral-500">Ville / CP</dt>
-            <dd class="font-medium text-neutral-800">
-              {{ siteConfig.contact.postalCode }} {{ siteConfig.contact.city }}
-            </dd>
-          </div>
-        </dl>
-      </div>
-
-      <hr class="border-neutral-100" />
-
-      <div>
-        <h2 class="font-semibold text-neutral-900 mb-3">Branding</h2>
-        <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-          <div>
-            <dt class="text-neutral-500">Couleur primaire</dt>
-            <dd class="flex items-center gap-2">
-              <div :style="{ background: siteConfig.branding.primaryColor }" class="w-6 h-6 rounded border border-neutral-200" />
-              <span class="font-mono text-neutral-800">{{ siteConfig.branding.primaryColor }}</span>
-            </dd>
-          </div>
-          <div>
-            <dt class="text-neutral-500">Logo</dt>
-            <dd class="font-mono text-xs text-neutral-800">{{ siteConfig.branding.logo }}</dd>
-          </div>
-        </dl>
-      </div>
-    </div>
-
-    <ToastContainer />
   </div>
 </template>

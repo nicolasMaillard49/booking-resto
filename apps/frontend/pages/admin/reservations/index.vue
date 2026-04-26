@@ -1,181 +1,100 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'admin', middleware: 'admin-auth' })
-
-import type { BookingStatus } from '@booking-resto/shared'
-
 const { apiFetch } = useAuth()
+const { showToast } = useToast()
 
-// ── Filtres ───────────────────────────────────────────────
-const filters = reactive({
-  page: 1,
-  limit: 20,
-  status: '',
-  date: '',
-})
+const items = ref<any[]>([])
+const total = ref(0)
+const page = ref(1)
+const pageSize = 20
+const search = ref('')
+const status = ref('')
 
-interface Booking {
-  id: string
-  clientName: string
-  clientEmail: string
-  clientPhone: string
-  date: string
-  duration: number
-  status: string
-  notes: string | null
-  amount: number | null
-  service: { id: string; name: string; price: number }
+let debounceTimer: any
+function debouncedFetch() {
+  clearTimeout(debounceTimer)
+  debounceTimer = setTimeout(fetch, 300)
 }
 
-interface PaginatedBookings {
-  data: Booking[]
-  meta: { page: number; limit: number; total: number; totalPages: number; hasNextPage: boolean }
+async function fetch() {
+  const params = new URLSearchParams({ page: String(page.value), pageSize: String(pageSize) })
+  if (status.value) params.set('status', status.value)
+  if (search.value) params.set('search', search.value)
+  const r = await apiFetch<{ items: any[]; total: number }>(`/admin/bookings?${params}`)
+  items.value = r.items
+  total.value = r.total
 }
 
-const result = ref<PaginatedBookings | null>(null)
-const loading = ref(false)
-
-async function loadBookings() {
-  loading.value = true
-  try {
-    const params: Record<string, string | number> = {
-      page: filters.page,
-      limit: filters.limit,
-    }
-    if (filters.status) params.status = filters.status
-    if (filters.date) params.date = filters.date
-
-    result.value = await apiFetch<PaginatedBookings>('/bookings', { params })
-  } catch (error) {
-    console.error('Erreur chargement réservations:', error)
-  } finally {
-    loading.value = false
-  }
+async function patch(id: string, newStatus: string) {
+  if (!confirm(`Passer cette réservation en ${newStatus} ?`)) return
+  await apiFetch(`/admin/bookings/${id}`, { method: 'PATCH', body: JSON.stringify({ status: newStatus }) } as any)
+  showToast(`Réservation ${newStatus.toLowerCase()}`)
+  await fetch()
 }
 
-onMounted(loadBookings)
-watch(filters, () => { filters.page = 1; loadBookings() }, { deep: true })
-
-function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('fr-FR', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
+function formatDateTime(iso: string) {
+  return new Date(iso).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' })
 }
+function badgeClass(s: string) {
+  return ({
+    PENDING:   'bg-amber-100 text-amber-800',
+    CONFIRMED: 'bg-green-100 text-green-800',
+    CANCELLED: 'bg-red-100 text-red-800',
+    COMPLETED: 'bg-blue-100 text-blue-800',
+    NO_SHOW:   'bg-neutral-200 text-neutral-700',
+  } as any)[s] ?? 'bg-neutral-100'
+}
+
+onMounted(fetch)
 </script>
 
 <template>
   <div>
-    <div class="flex items-center justify-between mb-6">
-      <h1 class="text-2xl font-bold text-neutral-900">Réservations</h1>
-      <span v-if="result" class="text-sm text-neutral-400">{{ result.meta.total }} total</span>
-    </div>
+    <h1 class="text-2xl font-bold text-neutral-900 mb-6">Réservations</h1>
 
-    <!-- Filtres -->
-    <div class="bg-white rounded-xl border border-neutral-100 p-4 mb-6 flex flex-wrap gap-3">
-      <select
-        v-model="filters.status"
-        class="border border-neutral-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-      >
-        <option value="">Tous les statuts</option>
-        <option value="PENDING">En attente</option>
-        <option value="CONFIRMED">Confirmé</option>
-        <option value="CANCELLED">Annulé</option>
-        <option value="COMPLETED">Complété</option>
-        <option value="NO_SHOW">Absent</option>
-      </select>
+    <AdminWeekAgendaCard />
 
-      <input
-        v-model="filters.date"
-        type="date"
-        class="border border-neutral-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-      />
-
-      <button
-        @click="filters.status = ''; filters.date = ''"
-        class="text-sm text-neutral-500 hover:text-neutral-700"
-      >
-        Réinitialiser
-      </button>
-    </div>
-
-    <!-- Table -->
-    <div class="bg-white rounded-xl border border-neutral-100 overflow-hidden">
-      <div v-if="loading" class="divide-y divide-neutral-50">
-        <div v-for="i in 5" :key="i" class="px-6 py-4 animate-pulse">
-          <div class="h-4 bg-neutral-100 rounded w-3/4 mb-2" />
-          <div class="h-3 bg-neutral-100 rounded w-1/2" />
-        </div>
+    <div class="bg-white border border-neutral-100 rounded-xl overflow-hidden">
+      <div class="p-4 border-b border-neutral-100 flex gap-3 flex-wrap">
+        <input v-model="search" @input="debouncedFetch" placeholder="Recherche nom/email/tél" class="px-3 py-2 border border-neutral-200 rounded-lg text-sm flex-1 min-w-[200px]" />
+        <select v-model="status" @change="fetch" class="px-3 py-2 border border-neutral-200 rounded-lg text-sm">
+          <option value="">Tous statuts</option>
+          <option value="PENDING">En attente</option>
+          <option value="CONFIRMED">Confirmé</option>
+          <option value="CANCELLED">Annulé</option>
+          <option value="COMPLETED">Terminé</option>
+          <option value="NO_SHOW">No-show</option>
+        </select>
       </div>
-
-      <div v-else-if="!result?.data.length" class="px-6 py-12 text-center text-neutral-400">
-        Aucune réservation trouvée
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-neutral-50 text-left text-neutral-500">
+            <tr>
+              <th class="p-3">Date</th><th class="p-3">Service</th><th class="p-3">Couv.</th><th class="p-3">Client</th><th class="p-3">Tél</th><th class="p-3">Statut</th><th class="p-3">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="b in items" :key="b.id" class="border-t border-neutral-100">
+              <td class="p-3 whitespace-nowrap">{{ formatDateTime(b.date) }}</td>
+              <td class="p-3 text-xs text-neutral-500">{{ b.serviceWindow?.label ?? '—' }}</td>
+              <td class="p-3 font-medium">{{ b.partySize }}</td>
+              <td class="p-3">{{ b.clientName }}<br><span class="text-xs text-neutral-400">{{ b.clientEmail }}</span></td>
+              <td class="p-3 text-xs">{{ b.clientPhone }}</td>
+              <td class="p-3"><span :class="badgeClass(b.status)" class="px-2 py-0.5 rounded text-xs">{{ b.status }}</span></td>
+              <td class="p-3 space-x-2 whitespace-nowrap">
+                <button v-if="b.status === 'PENDING'" @click="patch(b.id, 'CONFIRMED')" class="text-xs text-green-700 hover:underline">Confirmer</button>
+                <button v-if="b.status !== 'CANCELLED'" @click="patch(b.id, 'CANCELLED')" class="text-xs text-red-700 hover:underline">Annuler</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-
-      <div v-else>
-        <div class="overflow-x-auto">
-          <table class="w-full">
-            <thead class="bg-neutral-50 border-b border-neutral-100">
-              <tr>
-                <th class="text-left px-6 py-3 text-xs font-medium text-neutral-500 uppercase">Client</th>
-                <th class="text-left px-6 py-3 text-xs font-medium text-neutral-500 uppercase">Service</th>
-                <th class="text-left px-6 py-3 text-xs font-medium text-neutral-500 uppercase">Date</th>
-                <th class="text-left px-6 py-3 text-xs font-medium text-neutral-500 uppercase">Statut</th>
-                <th class="text-left px-6 py-3 text-xs font-medium text-neutral-500 uppercase">Actions</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-neutral-50">
-              <tr
-                v-for="booking in result.data"
-                :key="booking.id"
-                class="hover:bg-neutral-50 transition-colors"
-              >
-                <td class="px-6 py-4">
-                  <p class="font-medium text-neutral-800">{{ booking.clientName }}</p>
-                  <p class="text-sm text-neutral-400">{{ booking.clientEmail }}</p>
-                </td>
-                <td class="px-6 py-4">
-                  <p class="text-sm text-neutral-700">{{ booking.service.name }}</p>
-                  <p class="text-xs text-neutral-400">{{ booking.duration }} min</p>
-                </td>
-                <td class="px-6 py-4 text-sm text-neutral-700">{{ formatDate(booking.date) }}</td>
-                <td class="px-6 py-4">
-                  <AdminStatusBadge :status="booking.status" />
-                </td>
-                <td class="px-6 py-4">
-                  <NuxtLink
-                    :to="`/admin/reservations/${booking.id}`"
-                    class="text-sm text-primary-600 hover:underline"
-                  >
-                    Voir →
-                  </NuxtLink>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Pagination -->
-        <div v-if="result.meta.totalPages > 1" class="px-6 py-4 border-t border-neutral-100 flex items-center justify-between">
-          <button
-            :disabled="filters.page <= 1"
-            @click="filters.page--"
-            class="px-4 py-2 text-sm border border-neutral-200 rounded-lg disabled:opacity-40 hover:bg-neutral-50 transition-colors"
-          >
-            ← Précédent
-          </button>
-          <span class="text-sm text-neutral-400">
-            Page {{ result.meta.page }} / {{ result.meta.totalPages }}
-          </span>
-          <button
-            :disabled="!result.meta.hasNextPage"
-            @click="filters.page++"
-            class="px-4 py-2 text-sm border border-neutral-200 rounded-lg disabled:opacity-40 hover:bg-neutral-50 transition-colors"
-          >
-            Suivant →
-          </button>
+      <p v-if="!items.length" class="p-6 text-center text-neutral-400">Aucune réservation</p>
+      <div class="p-4 border-t border-neutral-100 flex justify-between text-sm">
+        <span>{{ total }} résultat{{ total > 1 ? 's' : '' }}</span>
+        <div class="space-x-2">
+          <button :disabled="page <= 1" @click="page--; fetch()" class="px-2 py-1 border border-neutral-200 rounded disabled:opacity-50">‹</button>
+          <button :disabled="page * pageSize >= total" @click="page++; fetch()" class="px-2 py-1 border border-neutral-200 rounded disabled:opacity-50">›</button>
         </div>
       </div>
     </div>
