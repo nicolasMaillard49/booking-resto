@@ -15,8 +15,12 @@
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
+    "@types/node": "^20.14.2",
     "prisma": "^5.14.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
+  },
+  "prisma": {
+    "seed": "ts-node --transpile-only seed.ts"
   }
 }
