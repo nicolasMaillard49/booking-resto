@@ -46,7 +46,7 @@ export class NotificationsService {
       'booking-confirmed', 'booking-pending', 'booking-admin-alert',
       'booking-confirmed-after-pending', 'booking-cancelled-by-admin',
       'booking-cancelled-by-client', 'booking-cancelled-admin-notify',
-      'booking-reminder', 'contact-message-alert',
+      'booking-reminder', 'booking-review-request', 'contact-message-alert',
     ];
     for (const n of names) {
       try { this.templates.set(n, readFileSync(join(TEMPLATES_DIR, `${n}.html`), 'utf8')); }
@@ -125,6 +125,18 @@ export class NotificationsService {
     const vars = { ...common, ...this.bookingVars(b) };
     await this.sendTpl('booking-reminder', b.clientEmail,
       `Rappel : votre table demain à ${vars.timeFormatted} — ${common.brandName}`, vars);
+  }
+
+  async onBookingReviewRequest(b: BookingForEmail) {
+    const common = await this.commonVars();
+    const googleReviewUrl = await this.settings.get('google_review_url');
+    if (!googleReviewUrl) {
+      this.logger.log(`Skip review request ${b.id}: google_review_url non configuré`);
+      return;
+    }
+    const vars = { ...common, ...this.bookingVars(b), googleReviewUrl };
+    await this.sendTpl('booking-review-request', b.clientEmail,
+      `Merci de votre visite — ${common.brandName}`, vars);
   }
 
   async onContactMessage(m: { name: string; email: string; message: string }) {

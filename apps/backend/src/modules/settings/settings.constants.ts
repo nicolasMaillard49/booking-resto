@@ -16,6 +16,18 @@ export type SettingKey =
   | 'contact_email'
   | 'google_maps_embed_url'
   | 'instagram_url'
+  | 'google_review_url'
+  | 'rating_value'
+  | 'rating_count'
+  | 'deepl_api_key'
+  | 'facebook_url'
+  | 'tiktok_url'
+  | 'twitter_url'
+  | 'youtube_url'
+  | 'tripadvisor_url'
+  | 'thefork_url'
+  | 'menu_page_title'
+  | 'menu_page_description'
   | 'seo_home_title'
   | 'seo_home_description'
   | 'seo_menu_title'
@@ -28,6 +40,11 @@ export const ALLOWED_KEYS: readonly SettingKey[] = [
   'contact_bg_image_id',
   'contact_address', 'contact_phone', 'contact_email',
   'google_maps_embed_url', 'instagram_url',
+  'google_review_url',
+  'rating_value', 'rating_count',
+  'deepl_api_key',
+  'facebook_url', 'tiktok_url', 'twitter_url', 'youtube_url', 'tripadvisor_url', 'thefork_url',
+  'menu_page_title', 'menu_page_description',
   'seo_home_title', 'seo_home_description',
   'seo_menu_title', 'seo_menu_description',
 ] as const;
@@ -50,6 +67,18 @@ export const DEFAULTS: Record<SettingKey, string> = {
   contact_email: '',
   google_maps_embed_url: '',
   instagram_url: '',
+  google_review_url: '',
+  rating_value: '5',
+  rating_count: '150',
+  deepl_api_key: '',
+  facebook_url: '',
+  tiktok_url: '',
+  twitter_url: '',
+  youtube_url: '',
+  tripadvisor_url: '',
+  thefork_url: '',
+  menu_page_title: 'Nos menus',
+  menu_page_description: '',
   seo_home_title: '',
   seo_home_description: '',
   seo_menu_title: '',
@@ -61,5 +90,9 @@ export const PUBLIC_KEYS: readonly SettingKey[] = [
   'contact_bg_image_id',
   'contact_address', 'contact_phone', 'contact_email',
   'google_maps_embed_url', 'instagram_url',
+  'google_review_url',
+  'rating_value', 'rating_count',
+  'facebook_url', 'tiktok_url', 'twitter_url', 'youtube_url', 'tripadvisor_url', 'thefork_url',
+  'menu_page_title', 'menu_page_description',
   'seo_home_title', 'seo_home_description', 'seo_menu_title', 'seo_menu_description',
 ] as const;

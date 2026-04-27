@@ -2,7 +2,7 @@
 definePageMeta({ layout: 'admin', middleware: 'admin-auth' })
 const { apiFetch } = useAuth()
 const { upload } = useImageUpload()
-const { error: showError } = useToast()
+const { success: showToast, error: showError } = useToast()
 const config = useRuntimeConfig()
 const apiUrl = config.public.apiUrl
 
@@ -17,13 +17,13 @@ async function fetch() {
 async function onUpload(e: Event) {
   const file = (e.target as HTMLInputElement).files?.[0]
   if (!file) return
-  try { await upload(file, filter.value); await fetch() }
+  try { await upload(file, filter.value); await fetch(); showToast('Image envoyée') }
   catch (err) { showError(extractError(err)) }
 }
 
 async function del(id: string) {
   if (!confirm('Supprimer ?')) return
-  try { await apiFetch(`/admin/images/${id}`, { method: 'DELETE' }); await fetch() }
+  try { await apiFetch(`/admin/images/${id}`, { method: 'DELETE' }); await fetch(); showToast('Image supprimée') }
   catch (e) { showError(extractError(e)) }
 }
 

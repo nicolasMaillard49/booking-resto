@@ -18,7 +18,18 @@ async function bootstrap() {
 
   // ── Sécurité ─────────────────────────────────────────────
   // CORP `cross-origin` pour autoriser les images servies cross-port (3101 → 3100 en dev)
-  app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
+  // CSP `frame-ancestors *` : permet l'embed iframe des PDFs depuis le frontend (port différent)
+  app.use(
+    helmet({
+      crossOriginResourcePolicy: { policy: 'cross-origin' },
+      contentSecurityPolicy: {
+        useDefaults: true,
+        directives: {
+          'frame-ancestors': ["'self'", 'http://localhost:*', '*'],
+        },
+      },
+    }),
+  );
 
   // CORS: en dev on autorise tous les localhost (Nuxt prend parfois un port
   // fallback 3002/3003/…), en prod on ne laisse passer que FRONTEND_URL.

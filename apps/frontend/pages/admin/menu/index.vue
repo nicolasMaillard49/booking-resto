@@ -7,7 +7,7 @@ const config = useRuntimeConfig()
 const apiUrl = config.public.apiUrl
 
 const docs = ref<any[]>([])
-const modal = reactive({ open: false, editing: null as any, form: { title: '', description: '', fileId: '', isPublished: true }, uploading: false })
+const modal = reactive({ open: false, editing: null as any, form: { title: '', description: '', fileId: '', isPublished: true }, uploading: false, convertPdf: true })
 
 onMounted(fetch)
 async function fetch() {
@@ -30,7 +30,7 @@ async function onFile(e: Event) {
   if (!file) return
   modal.uploading = true
   try {
-    const r = await upload(file, 'MENU')
+    const r = await upload(file, 'MENU', { convertPdf: modal.convertPdf })
     modal.form.fileId = r.id
   } catch (err) { showError(extractError(err)) }
   finally { modal.uploading = false }
@@ -55,6 +55,7 @@ async function del(id: string) {
   try {
     await apiFetch(`/admin/menu-documents/${id}`, { method: 'DELETE' })
     await fetch()
+    showToast('Menu supprimé')
   } catch (e) { showError(extractError(e)) }
 }
 
@@ -65,6 +66,7 @@ async function move(idx: number, delta: number) {
   try {
     await apiFetch('/admin/menu-documents/reorder', { method: 'PATCH', body: { ids: arr.map(d => d.id) } })
     docs.value = arr
+    showToast('Ordre modifié')
   } catch (e) { showError(extractError(e)) }
 }
 
@@ -112,15 +114,22 @@ function extractError(e: unknown): string {
           <form @submit.prevent="submit" class="space-y-4">
             <div><label class="block text-sm mb-1">Titre</label>
               <input v-model="modal.form.title" required class="w-full px-3 py-2 border border-neutral-200" /></div>
-            <div><label class="block text-sm mb-1">Description (optionnelle)</label>
-              <textarea v-model="modal.form.description" rows="3" class="w-full px-3 py-2 border border-neutral-200"></textarea></div>
+            <div><label class="block text-sm mb-1">Description (gras, italique, listes…)</label>
+              <AdminRichTextEditor v-model="modal.form.description" min-height="120px" /></div>
             <div>
-              <label class="block text-sm mb-1">Fichier (image ou PDF, max 5 Mo)</label>
+              <label class="block text-sm mb-1">Fichier (image ou PDF, max 10 Mo)</label>
+              <label class="flex items-start gap-2 text-xs text-neutral-600 mb-2 cursor-pointer">
+                <input v-model="modal.convertPdf" type="checkbox" class="mt-0.5" />
+                <span>
+                  <strong>Convertir le PDF en image</strong> (recommandé pour un rendu sans bordures, mais le fichier est plus lourd).
+                  Décoche pour stocker le PDF tel quel (plus léger, mais le viewer natif affiche un encadré).
+                </span>
+              </label>
               <div v-if="modal.form.fileId" class="mb-2 text-sm">
                 Fichier uploadé ✓ <button type="button" @click="modal.form.fileId = ''" class="text-red-700 hover:underline">Changer</button>
               </div>
               <input v-else type="file" accept="image/*,application/pdf" required @change="onFile" />
-              <p v-if="modal.uploading" class="text-sm text-neutral-400 mt-1">Upload…</p>
+              <p v-if="modal.uploading" class="text-sm text-neutral-400 mt-1">{{ modal.convertPdf ? 'Conversion + upload…' : 'Upload…' }}</p>
             </div>
             <label class="flex items-center gap-2 text-sm">
               <input v-model="modal.form.isPublished" type="checkbox" /> Publié

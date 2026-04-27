@@ -17,6 +17,7 @@ import { MenuDocumentsModule } from './modules/menu-documents/menu-documents.mod
 import { ContactMessagesModule } from './modules/contact-messages/contact-messages.module';
 import { PublicModule } from './modules/public/public.module';
 import { StatsModule } from './modules/stats/stats.module';
+import { PopupsModule } from './modules/popups/popups.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { StatsModule } from './modules/stats/stats.module';
     ContactMessagesModule,
     PublicModule,
     StatsModule,
+    PopupsModule,
   ],
   controllers: [AppController],
   providers: [

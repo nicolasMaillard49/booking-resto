@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const config = useRuntimeConfig()
+const { t, locale } = useI18n()
 
 const [{ data: siteRes }, { data: sectionsRes }, { data: windowsRes }] = await Promise.all([
   useFetch<Record<string, string>>(`${config.public.apiUrl}/public/site`, { key: 'public-site' }),
@@ -12,8 +13,12 @@ const sections = computed(() => sectionsRes.value ?? [])
 const windows = computed(() => windowsRes.value ?? [])
 
 useSeoMeta({
-  title: site.value.seo_home_title || site.value.brand_name,
-  description: site.value.seo_home_description,
+  title: () => locale.value === 'fr'
+    ? (site.value.seo_home_title || site.value.brand_name)
+    : t('seo.homeTitle', { brand: site.value.brand_name || '' }),
+  description: () => locale.value === 'fr'
+    ? site.value.seo_home_description
+    : t('seo.homeDescription', { brand: site.value.brand_name || '' }),
 })
 
 useHead({
@@ -37,8 +42,15 @@ useHead({
       :title="site.hero_title || 'Bienvenue'"
       :subtitle="site.hero_subtitle"
       :image-id="site.hero_image_id || null"
+      :rating-value="site.rating_value"
+      :rating-count="site.rating_count"
     />
     <HomeSection v-for="(s, i) in sections" :key="s.id" :section="s" :index="i" />
+    <ReviewsCarousel
+      :rating-value="site.rating_value"
+      :rating-count="site.rating_count"
+      :review-url="site.google_review_url"
+    />
     <ContactBlock :site="site" :windows="windows" />
   </div>
 </template>

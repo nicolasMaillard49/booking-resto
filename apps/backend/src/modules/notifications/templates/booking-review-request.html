@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head><meta charset="utf-8"></head>
+<body style="font-family: Inter, system-ui, sans-serif; color: #1a1a1a; max-width: 560px; margin: 0 auto; padding: 24px;">
+  <h1 style="font-family: Georgia, serif; font-size: 24px;">{{brandName}}</h1>
+  <h2>Merci de votre visite !</h2>
+  <p>Bonjour {{clientName}},</p>
+  <p>Nous espérons que vous avez passé un excellent moment à <strong>{{brandName}}</strong>.</p>
+  <p>Si vous avez aimé votre expérience, votre avis sur Google nous aiderait énormément à faire connaître la maison. Cela ne prend qu'une minute :</p>
+  {{#googleReviewUrl}}
+  <p style="text-align: center; margin: 32px 0;">
+    <a href="{{googleReviewUrl}}" style="display: inline-block; padding: 14px 28px; background-color: #c39d63; color: #ffffff; text-decoration: none; font-weight: 600; letter-spacing: 0.05em;">
+      ⭐ LAISSER UN AVIS GOOGLE
+    </a>
+  </p>
+  {{/googleReviewUrl}}
+  <p>Merci infiniment pour votre soutien.</p>
+  <p>À très bientôt,<br>L'équipe {{brandName}}</p>
+  <p style="color: #888; font-size: 12px; margin-top: 32px;">{{brandName}} — {{contactAddress}}</p>
+</body>
+</html>

@@ -2,6 +2,60 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Boutons globaux : effet hover unifié ───────────────────── */
+@layer components {
+  .btn-cta-gold {
+    display: inline-block;
+    padding: 0.625rem 1.75rem;
+    background-color: #c39d63;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+  }
+  .btn-cta-gold:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(195, 157, 99, 0.35);
+    background-color: #b58c52;
+  }
+
+  .btn-cta-outline {
+    display: inline-block;
+    padding: 0.625rem 1.75rem;
+    border: 1px solid #c39d63;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    transition: transform 0.25s ease, background-color 0.25s ease;
+  }
+  .btn-cta-outline:hover {
+    transform: translateY(-2px);
+    background-color: rgba(195, 157, 99, 0.15);
+  }
+
+  .btn-cta-dark {
+    display: inline-block;
+    padding: 0.625rem 1.5rem;
+    background-color: #1f1f1f;
+    color: #ffffff;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+  }
+  .btn-cta-dark:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.25);
+    background-color: #333333;
+  }
+
+  /* Hover doux générique pour tout <button> ou <a> non-stylisé */
+  .hover-lift {
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+  .hover-lift:hover {
+    transform: translateY(-1px);
+    opacity: 0.85;
+  }
+}
+
 /* ── Couleur primaire dynamique (depuis config Business) ── */
 :root {
   --color-primary-50: 244 239 230;

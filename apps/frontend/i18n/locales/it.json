@@ -1,0 +1,73 @@
+{
+  "nav": {
+    "home": "Home",
+    "menu": "Menu",
+    "reservation": "Prenota",
+    "contact": "Contatti"
+  },
+  "hero": {
+    "discover": "Scoprire",
+    "menu": "Menu",
+    "reserve": "Prenota",
+    "ratedWith": "Valutato {rating} stelle · più di {count} recensioni",
+    "reviewCount": "Più di {count} recensioni"
+  },
+  "reviews": {
+    "kicker": "Ne parlano",
+    "title": "I nostri clienti parlano di noi",
+    "basedOn": "basato su {count}+ recensioni Google",
+    "leaveReview": "Lascia una recensione"
+  },
+  "contact": {
+    "find": "Come trovarci",
+    "write": "Scrivici",
+    "schedule": "Orari",
+    "address": "Indirizzo",
+    "reserveTable": "Prenota un tavolo",
+    "name": "Nome",
+    "email": "Email",
+    "message": "Il tuo messaggio",
+    "send": "Invia messaggio",
+    "sending": "Invio…",
+    "sent": "Messaggio inviato, grazie!",
+    "captchaQuestion": "Quanto fa {q} ?"
+  },
+  "menu": {
+    "noMenu": "Nessun menu pubblicato per ora.",
+    "downloadPdf": "Scarica PDF",
+    "zoom": "Ingrandire"
+  },
+  "reservation": {
+    "title": "Prenota un tavolo",
+    "covers": "Numero di coperti",
+    "date": "Data",
+    "pickDate": "Scegli una data",
+    "slot": "Orario",
+    "loading": "Caricamento…",
+    "noSlots": "Nessun orario disponibile per questa data.",
+    "name": "Nome",
+    "email": "Email",
+    "phone": "Telefono",
+    "allergiesTitle": "Allergie, intolleranze e regimi",
+    "allergiesHelp": "Per un'esperienza perfetta, segnala qui qualsiasi allergia, intolleranza (glutine, lattosio, frutta a guscio…), dieta particolare (vegetariano, vegano…) o occasione speciale (compleanno…). Il nostro chef adatta ogni piatto.",
+    "allergiesPlaceholder": "Es: allergia alla frutta a guscio, senza glutine, compleanno…",
+    "submit": "Conferma prenotazione",
+    "submitting": "Invio…",
+    "confirmed": "Il tuo tavolo è confermato",
+    "confirmedHelp": "Hai appena ricevuto un'email di conferma.",
+    "pending": "Richiesta ricevuta",
+    "pendingHelp": "Confermeremo la tua richiesta entro 24h via email."
+  },
+  "footer": {
+    "madeBy": "Sito realizzato da"
+  },
+  "lang": {
+    "label": "Lingua"
+  },
+  "seo": {
+    "homeTitle": "{brand} — Ristorante",
+    "homeDescription": "Scopri {brand}, una cucina moderna e di stagione. Prenota il tuo tavolo online.",
+    "menuTitle": "Menu — {brand}",
+    "menuDescription": "Scopri i nostri menu di pranzo, cena e la nostra carta da {brand}."
+  }
+}

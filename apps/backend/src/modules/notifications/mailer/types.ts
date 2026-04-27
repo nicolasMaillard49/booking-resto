@@ -7,6 +7,7 @@ export type EmailTemplate =
   | 'booking-cancelled-by-client'
   | 'booking-cancelled-admin-notify'
   | 'booking-reminder'
+  | 'booking-review-request'
   | 'contact-message-alert';
 
 export interface MailPayload {

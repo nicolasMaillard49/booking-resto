@@ -1,0 +1,73 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "menu": "Menu",
+    "reservation": "Réserver",
+    "contact": "Contact"
+  },
+  "hero": {
+    "discover": "Découvrir",
+    "menu": "Menu",
+    "reserve": "Réserver",
+    "ratedWith": "Noté {rating} étoiles · plus de {count} avis",
+    "reviewCount": "Plus de {count} avis"
+  },
+  "reviews": {
+    "kicker": "Ils en parlent",
+    "title": "Avis de nos clients",
+    "basedOn": "basé sur plus de {count} avis Google",
+    "leaveReview": "Laisser un avis"
+  },
+  "contact": {
+    "find": "Nous trouver",
+    "write": "Nous écrire",
+    "schedule": "Horaires",
+    "address": "Adresse",
+    "reserveTable": "Réserver une table",
+    "name": "Nom",
+    "email": "Email",
+    "message": "Votre message",
+    "send": "Envoyer le message",
+    "sending": "Envoi…",
+    "sent": "Message envoyé, merci !",
+    "captchaQuestion": "Combien font {q} ?"
+  },
+  "menu": {
+    "noMenu": "Aucun menu publié pour le moment.",
+    "downloadPdf": "Télécharger le PDF",
+    "zoom": "Agrandir"
+  },
+  "reservation": {
+    "title": "Réserver une table",
+    "covers": "Nombre de couverts",
+    "date": "Date",
+    "pickDate": "Choisir une date",
+    "slot": "Créneau",
+    "loading": "Chargement…",
+    "noSlots": "Pas de créneaux disponibles à cette date.",
+    "name": "Nom",
+    "email": "Email",
+    "phone": "Téléphone",
+    "allergiesTitle": "Allergies, intolérances & régimes",
+    "allergiesHelp": "Pour une expérience parfaite, indiquez ici toute allergie, intolérance (gluten, lactose, fruits à coque…), régime particulier (végétarien, végan…) ou occasion spéciale (anniversaire…). Notre chef adapte chaque assiette.",
+    "allergiesPlaceholder": "Ex : allergie aux fruits à coque, sans gluten, anniversaire…",
+    "submit": "Confirmer la réservation",
+    "submitting": "Envoi…",
+    "confirmed": "Votre table est confirmée",
+    "confirmedHelp": "Un email de confirmation vient de vous être envoyé.",
+    "pending": "Demande reçue",
+    "pendingHelp": "Nous validons votre demande sous 24h. Vous recevrez un email."
+  },
+  "footer": {
+    "madeBy": "Site réalisé par"
+  },
+  "lang": {
+    "label": "Langue"
+  },
+  "seo": {
+    "homeTitle": "{brand} — Restaurant",
+    "homeDescription": "Découvrez {brand}, une cuisine moderne et de saison. Réservez votre table en ligne.",
+    "menuTitle": "Menu — {brand}",
+    "menuDescription": "Découvrez nos menus du midi, du soir et notre carte chez {brand}."
+  }
+}

@@ -20,6 +20,7 @@ function makeBooking(over: Partial<BookingForEmail> = {}): BookingForEmail {
     confirmedAt: new Date(),
     cancelledAt: null,
     reminderSentAt: null,
+    reviewRequestSentAt: null,
     createdAt: new Date(),
     updatedAt: new Date(),
     serviceWindow: {

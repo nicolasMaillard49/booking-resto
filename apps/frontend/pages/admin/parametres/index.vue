@@ -89,10 +89,57 @@ function extractError(e: unknown): string {
           <input v-model="local.contact_email" type="email" class="w-full px-3 py-2 border border-neutral-200" /></div>
         <div><label class="block text-sm mb-1">Lien Google Maps (src embed)</label>
           <input v-model="local.google_maps_embed_url" class="w-full px-3 py-2 border border-neutral-200" /></div>
+        <div><label class="block text-sm mb-1">URL Google « Laisser un avis » <span class="text-xs text-neutral-400">(envoyée 3h après chaque réservation + bouton public)</span></label>
+          <input v-model="local.google_review_url" placeholder="https://g.page/r/…/review" class="w-full px-3 py-2 border border-neutral-200" />
+          <p class="text-xs text-neutral-400 mt-1">Récupère cette URL dans <strong>Google Business Profile → Demander des avis</strong>. Si vide, aucun email d'avis ne sera envoyé et le bouton public sera masqué.</p>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-sm mb-1">Note (étoiles)</label>
+            <input v-model="local.rating_value" type="number" step="0.1" min="0" max="5" class="w-full px-3 py-2 border border-neutral-200" />
+          </div>
+          <div>
+            <label class="block text-sm mb-1">Nombre d'avis</label>
+            <input v-model="local.rating_count" type="number" min="0" class="w-full px-3 py-2 border border-neutral-200" />
+          </div>
+        </div>
         <div><label class="block text-sm mb-1">Instagram URL</label>
-          <input v-model="local.instagram_url" class="w-full px-3 py-2 border border-neutral-200" /></div>
+          <input v-model="local.instagram_url" placeholder="https://instagram.com/…" class="w-full px-3 py-2 border border-neutral-200" /></div>
+        <div><label class="block text-sm mb-1">Facebook URL</label>
+          <input v-model="local.facebook_url" placeholder="https://facebook.com/…" class="w-full px-3 py-2 border border-neutral-200" /></div>
+        <div><label class="block text-sm mb-1">TikTok URL</label>
+          <input v-model="local.tiktok_url" placeholder="https://tiktok.com/@…" class="w-full px-3 py-2 border border-neutral-200" /></div>
+        <div><label class="block text-sm mb-1">X (Twitter) URL</label>
+          <input v-model="local.twitter_url" placeholder="https://x.com/…" class="w-full px-3 py-2 border border-neutral-200" /></div>
+        <div><label class="block text-sm mb-1">YouTube URL</label>
+          <input v-model="local.youtube_url" placeholder="https://youtube.com/@…" class="w-full px-3 py-2 border border-neutral-200" /></div>
+        <div><label class="block text-sm mb-1">TripAdvisor URL</label>
+          <input v-model="local.tripadvisor_url" placeholder="https://tripadvisor.com/…" class="w-full px-3 py-2 border border-neutral-200" /></div>
+        <div><label class="block text-sm mb-1">TheFork URL</label>
+          <input v-model="local.thefork_url" placeholder="https://thefork.com/…" class="w-full px-3 py-2 border border-neutral-200" /></div>
         <div><label class="block text-sm mb-2">Image de fond de la section contact <span class="text-xs text-neutral-400">(optionnel, filtre sombre auto)</span></label>
           <AdminImagePicker v-model="local.contact_bg_image_id" section="OTHER" /></div>
+      </section>
+
+      <section class="bg-white border border-neutral-100 p-5 sm:p-6 space-y-4">
+        <h2 class="text-lg font-semibold mb-2">Traduction automatique</h2>
+        <div>
+          <label class="block text-sm mb-1">Clé API DeepL <span class="text-xs text-neutral-400">(optionnel — auto-traduit FR → EN/ES/IT/DE à chaque enregistrement de section)</span></label>
+          <input v-model="local.deepl_api_key" type="password" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx:fx" class="w-full px-3 py-2 border border-neutral-200 font-mono text-sm" />
+          <p class="text-xs text-neutral-400 mt-1">
+            Crée un compte gratuit sur <a href="https://www.deepl.com/pro-api" target="_blank" rel="noopener" class="underline hover:text-primary-600">deepl.com/pro-api</a> (500 000 caractères / mois offerts).
+            Si la clé se termine par <code class="bg-neutral-100 px-1">:fx</code>, c'est une clé Free.
+            Tant qu'aucune clé n'est saisie, les traductions doivent être renseignées manuellement.
+          </p>
+        </div>
+      </section>
+
+      <section class="bg-white border border-neutral-100 p-5 sm:p-6 space-y-4">
+        <h2 class="text-lg font-semibold mb-2">Page menu</h2>
+        <div><label class="block text-sm mb-1">Titre de la page</label>
+          <input v-model="local.menu_page_title" class="w-full px-3 py-2 border border-neutral-200" /></div>
+        <div><label class="block text-sm mb-1">Description (gras, italique, listes…)</label>
+          <AdminRichTextEditor v-model="local.menu_page_description" min-height="120px" /></div>
       </section>
 
       <section class="bg-white border border-neutral-100 p-5 sm:p-6 space-y-4">

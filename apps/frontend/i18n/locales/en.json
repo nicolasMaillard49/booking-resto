@@ -1,0 +1,73 @@
+{
+  "nav": {
+    "home": "Home",
+    "menu": "Menu",
+    "reservation": "Book",
+    "contact": "Contact"
+  },
+  "hero": {
+    "discover": "Discover",
+    "menu": "Menu",
+    "reserve": "Book",
+    "ratedWith": "Rated {rating} stars · more than {count} reviews",
+    "reviewCount": "More than {count} reviews"
+  },
+  "reviews": {
+    "kicker": "What they say",
+    "title": "What our guests say",
+    "basedOn": "based on {count}+ Google reviews",
+    "leaveReview": "Leave a review"
+  },
+  "contact": {
+    "find": "Find us",
+    "write": "Get in touch",
+    "schedule": "Opening hours",
+    "address": "Address",
+    "reserveTable": "Book a table",
+    "name": "Name",
+    "email": "Email",
+    "message": "Your message",
+    "send": "Send message",
+    "sending": "Sending…",
+    "sent": "Message sent, thank you!",
+    "captchaQuestion": "What is {q} ?"
+  },
+  "menu": {
+    "noMenu": "No menu published yet.",
+    "downloadPdf": "Download PDF",
+    "zoom": "Enlarge"
+  },
+  "reservation": {
+    "title": "Book a table",
+    "covers": "Number of guests",
+    "date": "Date",
+    "pickDate": "Pick a date",
+    "slot": "Time slot",
+    "loading": "Loading…",
+    "noSlots": "No slots available on this date.",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "allergiesTitle": "Allergies, intolerances & dietary needs",
+    "allergiesHelp": "For the best experience, please mention any allergy, intolerance (gluten, lactose, nuts…), special diet (vegetarian, vegan…) or occasion (birthday…). Our chef adapts every dish.",
+    "allergiesPlaceholder": "E.g. nut allergy, gluten-free, birthday…",
+    "submit": "Confirm booking",
+    "submitting": "Sending…",
+    "confirmed": "Your table is confirmed",
+    "confirmedHelp": "A confirmation email has just been sent.",
+    "pending": "Request received",
+    "pendingHelp": "We will confirm your request within 24h by email."
+  },
+  "footer": {
+    "madeBy": "Website made by"
+  },
+  "lang": {
+    "label": "Language"
+  },
+  "seo": {
+    "homeTitle": "{brand} — Restaurant",
+    "homeDescription": "Discover {brand}, modern seasonal cuisine. Book your table online.",
+    "menuTitle": "Menu — {brand}",
+    "menuDescription": "Discover our lunch, dinner and à la carte menus at {brand}."
+  }
+}

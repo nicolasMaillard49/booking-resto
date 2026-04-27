@@ -43,6 +43,7 @@ export default {
       fontFamily: {
         display: ['"Playfair Display SC"', 'Georgia', '"Times New Roman"', 'serif'],
         sans:    ['Montserrat', 'system-ui', '-apple-system', 'sans-serif'],
+        body:    ['Nunito', 'Helvetica', 'Arial', 'Lucida', 'sans-serif'],
         mono:    ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
       },
       letterSpacing: {

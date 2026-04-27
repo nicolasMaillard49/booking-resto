@@ -1,0 +1,73 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "menu": "Carta",
+    "reservation": "Reservar",
+    "contact": "Contacto"
+  },
+  "hero": {
+    "discover": "Descubrir",
+    "menu": "Carta",
+    "reserve": "Reservar",
+    "ratedWith": "Valorado {rating} estrellas · más de {count} reseñas",
+    "reviewCount": "Más de {count} reseñas"
+  },
+  "reviews": {
+    "kicker": "Hablan de nosotros",
+    "title": "Lo que dicen nuestros clientes",
+    "basedOn": "basado en {count}+ reseñas en Google",
+    "leaveReview": "Dejar una reseña"
+  },
+  "contact": {
+    "find": "Cómo llegar",
+    "write": "Contáctanos",
+    "schedule": "Horarios",
+    "address": "Dirección",
+    "reserveTable": "Reservar mesa",
+    "name": "Nombre",
+    "email": "Correo",
+    "message": "Tu mensaje",
+    "send": "Enviar mensaje",
+    "sending": "Enviando…",
+    "sent": "Mensaje enviado, ¡gracias!",
+    "captchaQuestion": "¿Cuánto es {q}?"
+  },
+  "menu": {
+    "noMenu": "Aún no se ha publicado ningún menú.",
+    "downloadPdf": "Descargar PDF",
+    "zoom": "Ampliar"
+  },
+  "reservation": {
+    "title": "Reservar una mesa",
+    "covers": "Número de comensales",
+    "date": "Fecha",
+    "pickDate": "Elegir fecha",
+    "slot": "Horario",
+    "loading": "Cargando…",
+    "noSlots": "No hay horarios disponibles para esta fecha.",
+    "name": "Nombre",
+    "email": "Correo",
+    "phone": "Teléfono",
+    "allergiesTitle": "Alergias, intolerancias y dietas",
+    "allergiesHelp": "Para una experiencia perfecta, indica aquí cualquier alergia, intolerancia (gluten, lactosa, frutos secos…), dieta especial (vegetariano, vegano…) u ocasión (cumpleaños…). Nuestro chef adapta cada plato.",
+    "allergiesPlaceholder": "Ej: alergia a frutos secos, sin gluten, cumpleaños…",
+    "submit": "Confirmar reserva",
+    "submitting": "Enviando…",
+    "confirmed": "Tu mesa está confirmada",
+    "confirmedHelp": "Acabamos de enviarte un correo de confirmación.",
+    "pending": "Solicitud recibida",
+    "pendingHelp": "Confirmaremos tu solicitud en menos de 24h por correo."
+  },
+  "footer": {
+    "madeBy": "Sitio realizado por"
+  },
+  "lang": {
+    "label": "Idioma"
+  },
+  "seo": {
+    "homeTitle": "{brand} — Restaurante",
+    "homeDescription": "Descubre {brand}, cocina moderna y de temporada. Reserva tu mesa en línea.",
+    "menuTitle": "Carta — {brand}",
+    "menuDescription": "Descubre nuestros menús de mediodía, noche y nuestra carta en {brand}."
+  }
+}

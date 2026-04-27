@@ -2,7 +2,7 @@ export function useImageUpload() {
   const { apiFetch, getAuthHeader } = useAuth()
   const config = useRuntimeConfig()
 
-  const MAX_SIZE = 5 * 1024 * 1024
+  const MAX_SIZE = 10 * 1024 * 1024
   const MAX_DIMENSION = 2000
   const QUALITY = 0.85
 
@@ -31,24 +31,46 @@ export function useImageUpload() {
     })
   }
 
-  async function upload(file: File, section: string, caption?: string): Promise<{ id: string; mimeType: string; size: number }> {
-    if (file.size > MAX_SIZE) throw new Error('Fichier trop volumineux (max 5 Mo)')
+  async function upload(
+    file: File,
+    section: string,
+    options?: { caption?: string; convertPdf?: boolean },
+  ): Promise<{ id: string; mimeType: string; size: number }> {
+    if (file.size > MAX_SIZE) throw new Error('Fichier trop volumineux (max 10 Mo)')
 
     const isPdf = file.type === 'application/pdf'
-    let blob: Blob; let width: number | undefined; let height: number | undefined; let mimeType: string
+    const convert = options?.convertPdf !== false // défaut : true
 
-    if (isPdf) {
-      blob = file
+    // PDF → conversion en PNG si activée, sinon upload tel quel
+    let workFile = file
+    let convertedToPng = false
+    if (isPdf && convert) {
+      const { pdfToPng } = await import('~/utils/pdfToPng')
+      workFile = await pdfToPng(file)
+      convertedToPng = true
+    }
+
+    let blob: Blob; let mimeType: string
+    let width: number | undefined; let height: number | undefined
+    let outName: string
+    if (isPdf && !convert) {
+      blob = workFile
       mimeType = 'application/pdf'
+      outName = workFile.name
+    } else if (convertedToPng) {
+      blob = workFile
+      mimeType = 'image/png'
+      outName = workFile.name
     } else {
-      const r = await resizeImage(file)
+      const r = await resizeImage(workFile)
       blob = r.blob; width = r.width; height = r.height; mimeType = r.mimeType
+      outName = workFile.name.replace(/\.[^.]+$/, '.jpg')
     }
 
     const fd = new FormData()
-    fd.append('file', new File([blob], file.name, { type: mimeType }))
+    fd.append('file', new File([blob], outName, { type: mimeType }))
     fd.append('section', section)
-    if (caption) fd.append('caption', caption)
+    if (options?.caption) fd.append('caption', options.caption)
     if (width)  fd.append('width', String(width))
     if (height) fd.append('height', String(height))
 

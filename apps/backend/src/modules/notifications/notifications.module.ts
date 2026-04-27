@@ -7,6 +7,7 @@ import { NodemailerProvider } from './mailer/nodemailer.provider';
 import { ResendProvider } from './mailer/resend.provider';
 import { NotificationsService } from './notifications.service';
 import { ReminderCron } from './jobs/reminder.cron';
+import { ReviewRequestCron } from './jobs/review-request.cron';
 
 @Module({
   imports: [PrismaModule, SettingsModule, ConfigModule],
@@ -14,6 +15,7 @@ import { ReminderCron } from './jobs/reminder.cron';
     NotificationsService,
     MailerService,
     ReminderCron,
+    ReviewRequestCron,
     {
       provide: MAILER_PROVIDER,
       useFactory: (config: ConfigService) =>

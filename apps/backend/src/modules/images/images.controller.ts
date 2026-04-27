@@ -37,7 +37,7 @@ export class ImagesController {
 
   @ApiBearerAuth() @UseGuards(JwtAuthGuard)
   @Post('admin/images')
-  @UseInterceptors(FileInterceptor('file', { limits: { fileSize: 5 * 1024 * 1024 } }))
+  @UseInterceptors(FileInterceptor('file', { limits: { fileSize: 10 * 1024 * 1024 } }))
   async upload(
     @UploadedFile() file: Express.Multer.File,
     @Body('section') section: string,

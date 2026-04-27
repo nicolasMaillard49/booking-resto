@@ -1,6 +1,7 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'admin', middleware: 'admin-auth' })
 const { apiFetch } = useAuth()
+const { success: showToast, error: showError } = useToast()
 const items = ref<any[]>([])
 const selected = ref<any>(null)
 
@@ -20,14 +21,23 @@ async function open(m: any) {
 
 async function toggleRead() {
   selected.value.isRead = !selected.value.isRead
-  await apiFetch(`/admin/contact-messages/${selected.value.id}`, { method: 'PATCH', body: { isRead: selected.value.isRead } })
+  try {
+    await apiFetch(`/admin/contact-messages/${selected.value.id}`, { method: 'PATCH', body: { isRead: selected.value.isRead } })
+    showToast(selected.value.isRead ? 'Marqué comme lu' : 'Marqué comme non lu')
+  } catch (e) {
+    selected.value.isRead = !selected.value.isRead
+    showError(e instanceof Error ? e.message : 'Erreur')
+  }
 }
 
 async function del() {
   if (!confirm('Supprimer ce message ?')) return
-  await apiFetch(`/admin/contact-messages/${selected.value.id}`, { method: 'DELETE' })
-  selected.value = null
-  await fetch()
+  try {
+    await apiFetch(`/admin/contact-messages/${selected.value.id}`, { method: 'DELETE' })
+    selected.value = null
+    await fetch()
+    showToast('Message supprimé')
+  } catch (e) { showError(e instanceof Error ? e.message : 'Erreur') }
 }
 
 function formatDate(iso: string) { return new Date(iso).toLocaleString('fr-FR') }

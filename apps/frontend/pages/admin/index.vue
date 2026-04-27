@@ -4,22 +4,41 @@ const { apiFetch } = useAuth()
 const overview = ref<any>(null)
 const loading = ref(true)
 
-onMounted(async () => {
+const todayISO = new Date().toISOString().slice(0, 10)
+const selectedDate = ref(todayISO)
+
+async function loadOverview() {
+  loading.value = true
   try {
-    overview.value = await apiFetch('/admin/stats/overview')
+    overview.value = await apiFetch(`/admin/stats/overview?date=${selectedDate.value}`)
   } finally {
     loading.value = false
   }
-})
+}
+
+onMounted(loadOverview)
+watch(selectedDate, loadOverview)
 
 const maxCouverts = computed(() =>
   Math.max(...(overview.value?.chart7d?.map((d: any) => d.couverts) ?? [0]), 1),
 )
+
+const isToday = computed(() => selectedDate.value === todayISO)
+const dateLabel = computed(() => {
+  if (isToday.value) return "aujourd'hui"
+  const d = new Date(selectedDate.value)
+  return d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })
+})
 </script>
 
 <template>
   <div>
-    <h1 class="text-2xl font-bold text-neutral-900 mb-6 sm:mb-8">Dashboard</h1>
+    <div class="flex items-center justify-between mb-6 sm:mb-8 gap-4 flex-wrap">
+      <h1 class="text-2xl font-bold text-neutral-900">Dashboard</h1>
+      <div class="w-full sm:w-72">
+        <DatePicker v-model="selectedDate" placeholder="Choisir un jour" />
+      </div>
+    </div>
 
     <div v-if="loading" class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-8">
       <div v-for="i in 4" :key="i" class="h-28 bg-white animate-pulse" />
@@ -27,8 +46,8 @@ const maxCouverts = computed(() =>
 
     <template v-else-if="overview">
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
-        <AdminStatCard label="Couverts aujourd'hui" :value="overview.couvertsToday" />
-        <AdminStatCard label="Réservations aujourd'hui" :value="overview.bookingsToday" />
+        <AdminStatCard :label="`Couverts ${dateLabel}`" :value="overview.couvertsToday" />
+        <AdminStatCard :label="`Réservations ${dateLabel}`" :value="overview.bookingsToday" />
         <AdminStatCard label="En attente" :value="overview.pendingCount" />
         <AdminStatCard label="Remplissage midi/soir" :value="`${overview.tauxRemplissageMidi}% / ${overview.tauxRemplissageSoir}%`" />
       </div>

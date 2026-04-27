@@ -7,6 +7,7 @@ import {
   Utensils,
   Mail,
   ImageIcon,
+  Megaphone,
   Settings,
   LogOut,
   Menu,
@@ -24,6 +25,7 @@ const navItems = [
   { path: '/admin/menu', icon: Utensils, label: 'Menu' },
   { path: '/admin/messages', icon: Mail, label: 'Messages' },
   { path: '/admin/images', icon: ImageIcon, label: 'Images' },
+  { path: '/admin/popups', icon: Megaphone, label: 'Popups' },
   { path: '/admin/parametres', icon: Settings, label: 'Paramètres' },
 ]
 
@@ -158,6 +160,8 @@ watch(() => route.path, () => {
       <!-- Spacer for bottom nav on mobile -->
       <div class="lg:hidden h-16" />
     </div>
+
+    <ToastContainer />
   </div>
 </template>
 

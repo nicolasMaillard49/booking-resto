@@ -14,7 +14,7 @@ export interface UploadImageInput {
 
 export type UpdateImageInput = Partial<{ caption: string; sortOrder: number; section: ImageSection }>;
 
-const MAX_SIZE = 5 * 1024 * 1024;
+const MAX_SIZE = 10 * 1024 * 1024;
 const ALLOWED_MIMES = new Set(['image/jpeg', 'image/png', 'image/webp', 'application/pdf']);
 const ALLOWED_SECTIONS = new Set(['HERO', 'HOMESECTION', 'MENU', 'OTHER']);
 

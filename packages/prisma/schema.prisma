@@ -29,11 +29,12 @@ model Booking {
   cancelToken     String        @unique @default(cuid())
   confirmToken    String?       @unique
   // Timestamps
-  confirmedAt     DateTime?
-  cancelledAt     DateTime?
-  reminderSentAt  DateTime?
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  confirmedAt           DateTime?
+  cancelledAt           DateTime?
+  reminderSentAt        DateTime?
+  reviewRequestSentAt   DateTime?                                  // Email de demande d'avis Google envoyé
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
 
   serviceWindow ServiceWindow? @relation(fields: [serviceWindowId], references: [id], onDelete: SetNull)
 
@@ -42,6 +43,7 @@ model Booking {
   @@index([cancelToken])
   @@index([confirmToken])
   @@index([reminderSentAt])
+  @@index([reviewRequestSentAt])
   @@map("bookings")
 }
 
@@ -76,19 +78,46 @@ model ScheduleException {
 
 // ── HomeSection (sections éditoriales home) ─────────────────
 model HomeSection {
-  id          String   @id @default(cuid())
+  id          String              @id @default(cuid())
   title       String
-  body        String   @db.Text
+  body        String              @db.Text
   imageId     String?
-  sortOrder   Int      @default(0)
-  isPublished Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  layout      HomeSectionLayout   @default(SPLIT)
+  bgColor     String?                                            // hex (#1f1f1f) ou null = bg-canvas par défaut
+  ctaLabel    String?
+  ctaUrl      String?
+  translations Json?                                             // { en: {title, body, ctaLabel}, es: {...}, it: {...}, de: {...} }
+  sortOrder   Int                 @default(0)
+  isPublished Boolean             @default(true)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
 
   image Image? @relation(fields: [imageId], references: [id], onDelete: SetNull)
 
   @@index([sortOrder])
   @@map("home_sections")
+}
+
+// ── Popup (événements / annonces site public) ───────────────
+model Popup {
+  id          String     @id @default(cuid())
+  title       String
+  body        String     @db.Text                                          // HTML rich text
+  imageId     String?
+  ctaLabel    String?
+  ctaUrl      String?
+  isActive    Boolean    @default(false)                                   // une seule peut être active à la fois (logique applicative)
+  trigger     PopupTrigger @default(ON_LOAD)
+  delaySeconds Int       @default(0)
+  showOncePerSession Boolean @default(true)
+  startDate   DateTime?
+  endDate     DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  image Image? @relation(fields: [imageId], references: [id], onDelete: SetNull)
+
+  @@map("popups")
 }
 
 // ── MenuDocument (page /menu : menus midi/soir/carte) ───────
@@ -135,6 +164,7 @@ model Image {
 
   homeSections  HomeSection[]
   menuDocuments MenuDocument[]
+  popups        Popup[]
 
   @@index([section, sortOrder])
   @@map("images")
@@ -181,5 +211,16 @@ enum ImageSection {
   HERO
   HOMESECTION
   MENU
+  POPUP
   OTHER
+}
+
+enum HomeSectionLayout {
+  SPLIT
+  FULL
+}
+
+enum PopupTrigger {
+  ON_LOAD
+  AFTER_DELAY
 }

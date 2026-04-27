@@ -1,0 +1,73 @@
+{
+  "nav": {
+    "home": "Startseite",
+    "menu": "Speisekarte",
+    "reservation": "Reservieren",
+    "contact": "Kontakt"
+  },
+  "hero": {
+    "discover": "Entdecken",
+    "menu": "Speisekarte",
+    "reserve": "Reservieren",
+    "ratedWith": "Bewertet {rating} Sterne · mehr als {count} Bewertungen",
+    "reviewCount": "Mehr als {count} Bewertungen"
+  },
+  "reviews": {
+    "kicker": "Was sie sagen",
+    "title": "Was unsere Gäste sagen",
+    "basedOn": "basierend auf {count}+ Google-Bewertungen",
+    "leaveReview": "Bewertung hinterlassen"
+  },
+  "contact": {
+    "find": "So finden Sie uns",
+    "write": "Schreiben Sie uns",
+    "schedule": "Öffnungszeiten",
+    "address": "Adresse",
+    "reserveTable": "Tisch reservieren",
+    "name": "Name",
+    "email": "E-Mail",
+    "message": "Ihre Nachricht",
+    "send": "Nachricht senden",
+    "sending": "Wird gesendet…",
+    "sent": "Nachricht gesendet, danke!",
+    "captchaQuestion": "Wie viel ist {q} ?"
+  },
+  "menu": {
+    "noMenu": "Noch keine Speisekarte veröffentlicht.",
+    "downloadPdf": "PDF herunterladen",
+    "zoom": "Vergrößern"
+  },
+  "reservation": {
+    "title": "Tisch reservieren",
+    "covers": "Anzahl der Personen",
+    "date": "Datum",
+    "pickDate": "Datum wählen",
+    "slot": "Uhrzeit",
+    "loading": "Laden…",
+    "noSlots": "Keine Zeiten an diesem Datum verfügbar.",
+    "name": "Name",
+    "email": "E-Mail",
+    "phone": "Telefon",
+    "allergiesTitle": "Allergien, Unverträglichkeiten & Diäten",
+    "allergiesHelp": "Für ein optimales Erlebnis nennen Sie hier bitte Allergien, Unverträglichkeiten (Gluten, Laktose, Nüsse…), besondere Diäten (vegetarisch, vegan…) oder Anlässe (Geburtstag…). Unser Chef passt jedes Gericht an.",
+    "allergiesPlaceholder": "Z. B. Nussallergie, glutenfrei, Geburtstag…",
+    "submit": "Reservierung bestätigen",
+    "submitting": "Wird gesendet…",
+    "confirmed": "Ihr Tisch ist bestätigt",
+    "confirmedHelp": "Eine Bestätigungs-E-Mail wurde Ihnen soeben zugesandt.",
+    "pending": "Anfrage erhalten",
+    "pendingHelp": "Wir bestätigen Ihre Anfrage innerhalb von 24 Stunden per E-Mail."
+  },
+  "footer": {
+    "madeBy": "Website erstellt von"
+  },
+  "lang": {
+    "label": "Sprache"
+  },
+  "seo": {
+    "homeTitle": "{brand} — Restaurant",
+    "homeDescription": "Entdecken Sie {brand}, moderne saisonale Küche. Reservieren Sie Ihren Tisch online.",
+    "menuTitle": "Speisekarte — {brand}",
+    "menuDescription": "Entdecken Sie unsere Mittags-, Abend- und À-la-carte-Menüs bei {brand}."
+  }
+}

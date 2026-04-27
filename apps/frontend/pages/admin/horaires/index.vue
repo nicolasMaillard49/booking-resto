@@ -57,8 +57,11 @@ async function submitWindow() {
 
 async function deleteWindow(id: string) {
   if (!confirm('Supprimer cette plage ?')) return
-  await apiFetch(`/service-windows/${id}`, { method: 'DELETE' })
-  await fetchAll()
+  try {
+    await apiFetch(`/service-windows/${id}`, { method: 'DELETE' })
+    await fetchAll()
+    showToast('Plage supprimée')
+  } catch (e) { showError(extractError(e)) }
 }
 
 function openExceptionModal() {
@@ -79,8 +82,11 @@ async function submitException() {
 
 async function deleteException(id: string) {
   if (!confirm('Supprimer ?')) return
-  await apiFetch(`/schedule-exceptions/${id}`, { method: 'DELETE' })
-  await fetchAll()
+  try {
+    await apiFetch(`/schedule-exceptions/${id}`, { method: 'DELETE' })
+    await fetchAll()
+    showToast('Fermeture supprimée')
+  } catch (e) { showError(extractError(e)) }
 }
 
 function formatDays(d: number[]) { return d.map(i => DAY_NAMES[i]).join(' ') }

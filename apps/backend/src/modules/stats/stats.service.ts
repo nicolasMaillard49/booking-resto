@@ -28,8 +28,11 @@ function endOfDayUTC(d: Date): Date { const x = new Date(d); x.setUTCHours(23, 5
 export class StatsService {
   constructor(private prisma: PrismaService, private settings: SettingsService) {}
 
-  async overview(): Promise<OverviewResult> {
-    const today = new Date();
+  async overview(date?: string): Promise<OverviewResult> {
+    const today = date ? new Date(date) : new Date();
+    if (Number.isNaN(today.getTime())) {
+      throw new Error('Date invalide');
+    }
     const dayStart = startOfDayUTC(today);
     const dayEnd = endOfDayUTC(today);
 

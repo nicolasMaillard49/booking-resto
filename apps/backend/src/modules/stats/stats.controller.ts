@@ -9,6 +9,6 @@ import { StatsService } from './stats.service';
 @Controller('admin/stats')
 export class StatsController {
   constructor(private stats: StatsService) {}
-  @Get('overview') overview() { return this.stats.overview(); }
+  @Get('overview') overview(@Query('date') date?: string) { return this.stats.overview(date); }
   @Get('period')   period(@Query('from') from: string, @Query('to') to: string) { return this.stats.byPeriod(from, to); }
 }
