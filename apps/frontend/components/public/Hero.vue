@@ -1,13 +1,14 @@
 <template>
-  <section class="relative h-[80vh] min-h-[500px] w-full overflow-hidden bg-heading">
+  <section class="relative h-screen w-full overflow-hidden bg-dark">
     <img v-if="imageUrl" :src="imageUrl" :alt="title" class="absolute inset-0 w-full h-full object-cover" />
-    <div class="absolute inset-0 bg-gradient-to-b from-black/30 via-black/40 to-black/60"></div>
+    <!-- Overlay assombri pour faire ressortir le titre -->
+    <div class="absolute inset-0 bg-black/60"></div>
     <div class="relative z-10 h-full flex flex-col items-center justify-center text-center text-canvas px-8 sm:px-12 md:px-20">
-      <h1 class="font-display text-5xl sm:text-6xl lg:text-7xl font-light mb-6 tracking-extra-wide leading-tight">{{ title }}</h1>
-      <p v-if="subtitle" class="text-lg sm:text-xl max-w-2xl mb-12 opacity-90 font-light tracking-wide">{{ subtitle }}</p>
+      <h1 class="font-display text-5xl sm:text-6xl lg:text-8xl font-light mb-8 tracking-extra-wide leading-tight drop-shadow-lg">{{ title }}</h1>
+      <p v-if="subtitle" class="text-lg sm:text-xl max-w-2xl mb-14 opacity-95 font-light tracking-wide drop-shadow">{{ subtitle }}</p>
       <div class="flex flex-col sm:flex-row gap-4">
-        <NuxtLink to="/menu" class="px-10 py-4 bg-canvas text-heading hover:bg-paper transition border border-canvas tracking-wide">Menu</NuxtLink>
-        <NuxtLink to="/reservation" class="px-10 py-4 border border-canvas text-canvas hover:bg-canvas hover:text-heading transition tracking-wide">Réserver</NuxtLink>
+        <NuxtLink to="/menu" class="px-12 py-4 bg-gold text-canvas hover:bg-gold/90 transition tracking-wider uppercase text-sm">Menu</NuxtLink>
+        <NuxtLink to="/reservation" class="px-12 py-4 border border-gold text-gold hover:bg-gold hover:text-canvas transition tracking-wider uppercase text-sm">Réserver</NuxtLink>
       </div>
     </div>
   </section>

@@ -1,15 +1,16 @@
 <template>
-  <section class="grid lg:grid-cols-2 min-h-[60vh] lg:min-h-[80vh]">
-    <div :class="['relative overflow-hidden min-h-[50vh] lg:min-h-0', reversed ? 'lg:order-2' : '']">
+  <section class="grid lg:grid-cols-2">
+    <!-- Image : 50% width sur desktop, hauteur naturelle (pas d'écrasement) -->
+    <div :class="['flex items-center justify-center bg-line', reversed ? 'lg:order-2' : '']">
       <img
         v-if="imageUrl"
         :src="imageUrl"
         :alt="section.title"
-        class="absolute inset-0 w-full h-full object-cover"
+        class="w-full h-auto"
       />
-      <div v-else class="absolute inset-0 bg-line"></div>
     </div>
 
+    <!-- Texte : 50% width, padding intérieur respirant, centre vertical -->
     <div class="flex items-center justify-center px-8 sm:px-16 lg:px-24 py-20 lg:py-32 bg-canvas">
       <div class="max-w-xl">
         <h2 class="font-display text-4xl sm:text-5xl lg:text-6xl mb-8 tracking-extra-wide leading-tight text-heading">{{ section.title }}</h2>

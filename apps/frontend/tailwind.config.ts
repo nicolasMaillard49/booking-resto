@@ -25,6 +25,8 @@ export default {
         heading: '#333333',
         line:    '#e5e5e5',
         muted:   '#999999',
+        dark:    '#1f1f1f',  // sections sombres
+        gold:    '#c39d63',  // accent / CTA principal
         neutral: {
           50:  '#fafafa',
           100: '#f5f5f5',
