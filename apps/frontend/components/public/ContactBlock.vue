@@ -38,7 +38,7 @@
         </div>
 
         <div class="mt-10 text-center">
-          <NuxtLink to="/reservation" class="inline-block px-10 py-3.5 transition tracking-wider uppercase text-sm" style="background-color: #c39d63; color: #1a1a1a;">Réserver une table</NuxtLink>
+          <NuxtLink to="/reservation" class="inline-block px-10 py-3.5 transition tracking-wider uppercase text-sm" style="background-color: #c39d63; color: #ffffff;">Réserver une table</NuxtLink>
         </div>
       </div>
 

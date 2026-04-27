@@ -41,8 +41,8 @@ export default {
         },
       },
       fontFamily: {
-        display: ['Fraunces', 'ui-serif', 'Georgia', 'serif'],
-        sans:    ['"DM Sans"', 'system-ui', '-apple-system', 'sans-serif'],
+        display: ['"Playfair Display SC"', 'Georgia', '"Times New Roman"', 'serif'],
+        sans:    ['Montserrat', 'system-ui', '-apple-system', 'sans-serif'],
         mono:    ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
       },
       letterSpacing: {
