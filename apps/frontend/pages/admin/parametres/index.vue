@@ -18,11 +18,21 @@ async function onSave() {
     await save(local)
     showToast('Paramètres enregistrés')
   } catch (e) {
-    const data = (e as { data?: { message?: string } }).data
-    showError(data?.message ?? 'Erreur')
+    showError(extractError(e))
   } finally {
     saving.value = false
   }
+}
+
+function extractError(e: unknown): string {
+  if (e && typeof e === 'object' && 'data' in e) {
+    const data = (e as { data?: { message?: string; details?: Array<{ message: string }> } }).data
+    if (data?.details?.length) {
+      return data.details.map(d => d.message).join(' · ')
+    }
+    return data?.message ?? 'Erreur'
+  }
+  return e instanceof Error ? e.message : 'Erreur inconnue'
 }
 </script>
 
