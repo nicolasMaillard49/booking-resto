@@ -113,13 +113,8 @@ function extractError(e: unknown): string {
             <div><label class="block text-sm mb-1">Texte</label>
               <textarea v-model="modal.form.body" required rows="6" class="w-full px-3 py-2 border border-neutral-200 rounded-lg"></textarea></div>
             <div>
-              <label class="block text-sm mb-1">Image</label>
-              <div v-if="modal.form.imageId" class="mb-2">
-                <img :src="`${apiUrl}/images/${modal.form.imageId}`" class="h-24 object-cover rounded" />
-                <button type="button" @click="modal.form.imageId = ''" class="text-sm text-red-700 hover:underline">Retirer</button>
-              </div>
-              <input type="file" accept="image/*" @change="onFile" />
-              <p v-if="modal.uploading" class="text-sm text-neutral-400 mt-1">Upload…</p>
+              <label class="block text-sm mb-2">Image</label>
+              <AdminImagePicker v-model="modal.form.imageId" section="HOMESECTION" />
             </div>
             <label class="flex items-center gap-2 text-sm">
               <input v-model="modal.form.isPublished" type="checkbox" /> Publié

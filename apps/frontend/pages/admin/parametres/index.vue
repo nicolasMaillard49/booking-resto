@@ -53,8 +53,8 @@ async function onSave() {
           <input v-model="local.hero_title" class="w-full px-3 py-2 border border-neutral-200 rounded-lg" /></div>
         <div><label class="block text-sm mb-1">Sous-titre du hero</label>
           <input v-model="local.hero_subtitle" class="w-full px-3 py-2 border border-neutral-200 rounded-lg" /></div>
-        <div><label class="block text-sm mb-1">ID de l'image hero <span class="text-xs text-neutral-400">(uploader d'abord dans /admin/images section HERO)</span></label>
-          <input v-model="local.hero_image_id" class="w-full px-3 py-2 border border-neutral-200 rounded-lg" /></div>
+        <div><label class="block text-sm mb-2">Image du hero</label>
+          <AdminImagePicker v-model="local.hero_image_id" section="HERO" /></div>
       </section>
 
       <section class="bg-white border border-neutral-100 rounded-xl p-5 sm:p-6 space-y-4">
