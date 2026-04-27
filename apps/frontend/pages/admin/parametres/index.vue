@@ -6,17 +6,27 @@ const local = reactive<Record<string, string>>({})
 const loaded = ref(false)
 const saving = ref(false)
 
+// Modals : confirmation avant + succès après
+const confirmOpen = ref(false)
+const successOpen = ref(false)
+
 onMounted(async () => {
   await load()
   Object.assign(local, settings.value)
   loaded.value = true
 })
 
-async function onSave() {
+function askConfirm() { confirmOpen.value = true }
+function cancelConfirm() { confirmOpen.value = false }
+
+async function confirmSave() {
+  confirmOpen.value = false
   saving.value = true
   try {
     await save(local)
+    successOpen.value = true
     showToast('Paramètres enregistrés')
+    setTimeout(() => { successOpen.value = false }, 2500)
   } catch (e) {
     showError(extractError(e))
   } finally {
@@ -97,9 +107,35 @@ function extractError(e: unknown): string {
           <input v-model="local.seo_menu_description" class="w-full px-3 py-2 border border-neutral-200" /></div>
       </section>
 
-      <button @click="onSave" :disabled="saving" class="px-6 py-3 bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50">
+      <button @click="askConfirm" :disabled="saving" class="px-6 py-3 bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50">
         {{ saving ? 'Enregistrement…' : 'Enregistrer' }}
       </button>
     </div>
+
+    <!-- Modal de confirmation avant enregistrement -->
+    <Teleport to="body">
+      <div v-if="confirmOpen" class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-6" @click.self="cancelConfirm">
+        <div class="bg-white p-8 max-w-md w-full">
+          <h3 class="text-lg font-semibold text-neutral-900 mb-3">Enregistrer les paramètres ?</h3>
+          <p class="text-sm text-neutral-600 mb-6">Les modifications seront appliquées immédiatement sur le site public.</p>
+          <div class="flex gap-3 justify-end">
+            <button type="button" @click="cancelConfirm" class="px-5 py-2.5 border border-neutral-200 text-neutral-700 hover:bg-neutral-50">Annuler</button>
+            <button type="button" @click="confirmSave" :disabled="saving" class="px-5 py-2.5 bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50">Confirmer</button>
+          </div>
+        </div>
+      </div>
+    </Teleport>
+
+    <!-- Modal de succès après enregistrement -->
+    <Teleport to="body">
+      <div v-if="successOpen" class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-6" @click.self="successOpen = false">
+        <div class="bg-white p-8 max-w-sm w-full text-center">
+          <div class="text-5xl mb-3">✓</div>
+          <h3 class="text-lg font-semibold text-neutral-900 mb-2">Paramètres enregistrés</h3>
+          <p class="text-sm text-neutral-600 mb-6">Les modifications sont en ligne.</p>
+          <button type="button" @click="successOpen = false" class="px-5 py-2.5 bg-primary-600 text-white hover:bg-primary-700">Fermer</button>
+        </div>
+      </div>
+    </Teleport>
   </div>
 </template>

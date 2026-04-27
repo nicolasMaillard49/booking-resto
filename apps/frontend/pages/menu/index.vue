@@ -1,9 +1,9 @@
 <template>
   <div class="max-w-5xl mx-auto px-8 sm:px-12 lg:px-16 pt-32 lg:pt-40 pb-20 lg:pb-28">
-    <h1 class="font-display text-5xl sm:text-6xl lg:text-7xl text-center mb-20 tracking-extra-wide leading-tight text-heading">Nos menus</h1>
+    <h1 class="font-display text-6xl sm:text-7xl lg:text-9xl text-center mb-24 tracking-extra-wide leading-tight" style="color: #333333;">Nos menus</h1>
 
     <div v-for="doc in documents" :key="doc.id" class="mb-24 lg:mb-32">
-      <h2 class="font-display text-3xl sm:text-4xl lg:text-5xl mb-4 tracking-extra-wide leading-tight text-heading">{{ doc.title }}</h2>
+      <h2 class="font-display text-4xl sm:text-5xl lg:text-6xl mb-6 tracking-extra-wide leading-tight" style="color: #333333;">{{ doc.title }}</h2>
       <p v-if="doc.description" class="text-ink mb-10 max-w-2xl leading-relaxed tracking-wide text-base sm:text-lg">{{ doc.description }}</p>
 
       <!-- PDF : rendu canvas via vue-pdf-embed (toutes les pages) -->
