@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-5xl mx-auto px-8 sm:px-12 lg:px-16 py-20 lg:py-28">
+  <div class="max-w-5xl mx-auto px-8 sm:px-12 lg:px-16 pt-32 lg:pt-40 pb-20 lg:pb-28">
     <h1 class="font-display text-5xl sm:text-6xl lg:text-7xl text-center mb-20 tracking-extra-wide leading-tight text-heading">Nos menus</h1>
 
     <div v-for="doc in documents" :key="doc.id" class="mb-24 lg:mb-32">

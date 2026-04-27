@@ -1,16 +1,16 @@
 <template>
-  <!-- Une grande section sombre divisée en 2 cards côte à côte avec gap -->
-  <section id="contact" class="py-20 lg:py-28 px-6 sm:px-10 lg:px-16" style="background-color: #1a1a1a;">
+  <!-- Section parent : bg clair, contient 2 cards sombres cote a cote -->
+  <section id="contact" class="py-20 lg:py-28 px-6 sm:px-10 lg:px-16" style="background-color: #f5f5f5;">
     <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-6 lg:gap-8">
 
-      <!-- Card 1 : Nous trouver -->
-      <div class="rounded-xl p-8 sm:p-10 lg:p-12 flex flex-col" style="background-color: #1f1f1f; border: 1px solid rgba(255,255,255,0.06);">
+      <!-- Card 1 : Nous trouver (sombre) -->
+      <div class="rounded-xl p-8 sm:p-10 lg:p-12 flex flex-col" style="background-color: #1f1f1f;">
         <h2 class="font-display text-3xl sm:text-4xl lg:text-5xl mb-10 tracking-extra-wide leading-tight text-center" style="color: #f5f5f5;">Nous trouver</h2>
 
         <div class="space-y-8 flex-1">
           <div>
             <h3 class="font-medium mb-3 text-xs uppercase tracking-mega-wide" style="color: #c39d63;">Horaires</h3>
-            <div style="color: #cccccc;"><ScheduleDisplay :windows="windows" /></div>
+            <div style="color: #cccccc;"><ScheduleDisplay :windows="windows" dark /></div>
           </div>
 
           <div>
@@ -23,7 +23,7 @@
           <iframe
             v-if="mapsUrl"
             :src="mapsUrl"
-            class="w-full h-64 lg:h-72 border-0 rounded"
+            class="w-full h-64 lg:h-72 border-0"
             loading="lazy"
             referrerpolicy="no-referrer-when-downgrade"
             allowfullscreen
@@ -31,12 +31,12 @@
         </div>
 
         <div class="mt-10 text-center">
-          <NuxtLink to="/reservation" class="inline-block px-10 py-3.5 transition tracking-wider uppercase text-sm rounded" style="background-color: #c39d63; color: #1a1a1a;">Réserver une table</NuxtLink>
+          <NuxtLink to="/reservation" class="inline-block px-10 py-3.5 transition tracking-wider uppercase text-sm" style="background-color: #c39d63; color: #1a1a1a;">Réserver une table</NuxtLink>
         </div>
       </div>
 
-      <!-- Card 2 : Nous écrire -->
-      <div class="rounded-xl p-8 sm:p-10 lg:p-12 flex flex-col" style="background-color: #1f1f1f; border: 1px solid rgba(255,255,255,0.06);">
+      <!-- Card 2 : Nous écrire (sombre) -->
+      <div class="rounded-xl p-8 sm:p-10 lg:p-12 flex flex-col" style="background-color: #1f1f1f;">
         <h2 class="font-display text-3xl sm:text-4xl lg:text-5xl mb-10 tracking-extra-wide leading-tight text-center" style="color: #f5f5f5;">Nous écrire</h2>
         <div class="flex-1">
           <ContactForm dark />

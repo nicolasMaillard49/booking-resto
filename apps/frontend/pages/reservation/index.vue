@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-2xl mx-auto px-6 py-16">
+  <div class="max-w-2xl mx-auto px-6 pt-32 lg:pt-40 pb-16">
     <h1 class="font-display text-4xl md:text-5xl text-center mb-12 tracking-tight">Réserver une table</h1>
 
     <div v-if="!result" class="space-y-10">

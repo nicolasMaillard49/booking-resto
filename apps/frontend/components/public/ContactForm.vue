@@ -16,7 +16,7 @@
       <label :class="labelClass" :style="dark ? 'color: #c39d63;' : ''">Pour vérifier : combien font {{ captcha.question }} ?</label>
       <input v-model="form.captchaAnswer" required type="text" :class="['w-32', inputClass]" :style="dark ? darkInputStyle : ''" />
     </div>
-    <button type="submit" :disabled="submitting" class="px-12 py-4 transition disabled:opacity-50 tracking-wider uppercase text-sm" style="background-color: #c39d63; color: #f5f5f5;">
+    <button type="submit" :disabled="submitting" class="px-12 py-4 transition disabled:opacity-50 tracking-wider uppercase text-sm" style="background-color: #c39d63; color: #1a1a1a;">
       {{ submitting ? 'Envoi…' : 'Envoyer le message' }}
     </button>
     <p v-if="success" class="tracking-wide" :style="dark ? 'color: #4ade80;' : 'color: #15803d;'">Message envoyé, merci !</p>
