@@ -1,7 +1,7 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'admin', middleware: 'admin-auth' })
 const { apiFetch } = useAuth()
-const { showToast } = useToast()
+const { success: showToast } = useToast()
 
 const windows = ref<any[]>([])
 const exceptions = ref<any[]>([])

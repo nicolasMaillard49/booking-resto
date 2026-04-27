@@ -1,7 +1,7 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'admin', middleware: 'admin-auth' })
 const { apiFetch } = useAuth()
-const { showToast } = useToast()
+const { success: showToast } = useToast()
 const { upload } = useImageUpload()
 const config = useRuntimeConfig()
 const apiUrl = config.public.apiUrl

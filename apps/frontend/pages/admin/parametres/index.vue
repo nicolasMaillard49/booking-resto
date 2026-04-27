@@ -1,7 +1,7 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'admin', middleware: 'admin-auth' })
 const { settings, load, save } = useSettings()
-const { showToast } = useToast()
+const { success: showToast } = useToast()
 const local = reactive<Record<string, string>>({})
 const loaded = ref(false)
 const saving = ref(false)

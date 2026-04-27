@@ -16,7 +16,8 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
 
   // ── Sécurité ─────────────────────────────────────────────
-  app.use(helmet());
+  // CORP `cross-origin` pour autoriser les images servies cross-port (3101 → 3100 en dev)
+  app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 
   // CORS: en dev on autorise tous les localhost (Nuxt prend parfois un port
   // fallback 3002/3003/…), en prod on ne laisse passer que FRONTEND_URL.
