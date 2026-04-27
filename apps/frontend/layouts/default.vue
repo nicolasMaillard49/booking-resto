@@ -11,5 +11,9 @@
 
 <script setup lang="ts">
 const config = useRuntimeConfig()
-const { data: site } = await useFetch<Record<string, string>>(`${config.public.apiUrl}/public/site`)
+const { data: site } = await useFetch<Record<string, string>>(`${config.public.apiUrl}/public/site`, {
+  // Cache court : settings peuvent changer souvent depuis l'admin
+  key: 'public-site',
+  server: true,
+})
 </script>

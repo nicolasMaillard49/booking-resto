@@ -1,7 +1,7 @@
 <template>
-  <div class="space-y-1.5 text-sm">
+  <div class="space-y-2 text-sm tracking-wide">
     <div v-for="line in lines" :key="line.label">
-      <span class="font-medium">{{ line.label }} :</span> {{ line.times }}
+      <span class="font-medium text-heading">{{ line.label }} :</span> {{ line.times }}
     </div>
   </div>
 </template>

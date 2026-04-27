@@ -2,9 +2,9 @@
 const config = useRuntimeConfig()
 
 const [{ data: siteRes }, { data: sectionsRes }, { data: windowsRes }] = await Promise.all([
-  useFetch<Record<string, string>>(`${config.public.apiUrl}/public/site`),
-  useFetch<any[]>(`${config.public.apiUrl}/public/home-sections`),
-  useFetch<any[]>(`${config.public.apiUrl}/public/schedule`),
+  useFetch<Record<string, string>>(`${config.public.apiUrl}/public/site`, { key: 'public-site' }),
+  useFetch<any[]>(`${config.public.apiUrl}/public/home-sections`, { key: 'public-home-sections' }),
+  useFetch<any[]>(`${config.public.apiUrl}/public/schedule`, { key: 'public-schedule' }),
 ])
 
 const site = computed(() => siteRes.value ?? ({} as Record<string, string>))

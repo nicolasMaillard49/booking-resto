@@ -1,26 +1,26 @@
 <template>
-  <form @submit.prevent="submit" class="space-y-4">
+  <form @submit.prevent="submit" class="space-y-5">
     <div>
-      <label class="block text-sm mb-1">Nom</label>
-      <input v-model="form.name" required type="text" class="w-full px-3 py-2 border border-line/20 bg-canvas focus:outline-none focus:border-line" />
+      <label class="block text-xs uppercase tracking-mega-wide mb-2 text-muted">Nom</label>
+      <input v-model="form.name" required type="text" class="w-full px-4 py-3 border border-line bg-canvas text-ink focus:outline-none focus:border-heading tracking-wide" />
     </div>
     <div>
-      <label class="block text-sm mb-1">Email</label>
-      <input v-model="form.email" required type="email" class="w-full px-3 py-2 border border-line/20 bg-canvas focus:outline-none focus:border-line" />
+      <label class="block text-xs uppercase tracking-mega-wide mb-2 text-muted">Email</label>
+      <input v-model="form.email" required type="email" class="w-full px-4 py-3 border border-line bg-canvas text-ink focus:outline-none focus:border-heading tracking-wide" />
     </div>
     <div>
-      <label class="block text-sm mb-1">Message</label>
-      <textarea v-model="form.message" required rows="4" class="w-full px-3 py-2 border border-line/20 bg-canvas focus:outline-none focus:border-line"></textarea>
+      <label class="block text-xs uppercase tracking-mega-wide mb-2 text-muted">Message</label>
+      <textarea v-model="form.message" required rows="5" class="w-full px-4 py-3 border border-line bg-canvas text-ink focus:outline-none focus:border-heading tracking-wide"></textarea>
     </div>
     <div v-if="captcha">
-      <label class="block text-sm mb-1">Pour vérifier : combien font {{ captcha.question }} ?</label>
-      <input v-model="form.captchaAnswer" required type="text" class="w-32 px-3 py-2 border border-line/20 bg-canvas focus:outline-none focus:border-line" />
+      <label class="block text-xs uppercase tracking-mega-wide mb-2 text-muted">Pour vérifier : combien font {{ captcha.question }} ?</label>
+      <input v-model="form.captchaAnswer" required type="text" class="w-32 px-4 py-3 border border-line bg-canvas text-ink focus:outline-none focus:border-heading tracking-wide" />
     </div>
-    <button type="submit" :disabled="submitting" class="px-6 py-3 bg-ink text-canvas hover:bg-muted transition disabled:opacity-50">
+    <button type="submit" :disabled="submitting" class="px-10 py-4 bg-heading text-canvas hover:bg-ink transition disabled:opacity-50 tracking-wider">
       {{ submitting ? 'Envoi…' : 'Envoyer' }}
     </button>
-    <p v-if="success" class="text-green-700">Message envoyé, merci !</p>
-    <p v-if="error" class="text-red-700">{{ error }}</p>
+    <p v-if="success" class="text-green-700 tracking-wide">Message envoyé, merci !</p>
+    <p v-if="error" class="text-red-700 tracking-wide">{{ error }}</p>
   </form>
 </template>
 
@@ -33,16 +33,13 @@ const success = ref(false)
 const error = ref('')
 
 onMounted(async () => {
-  try {
-    const r = await $fetch<any>(`${config.public.apiUrl}/contact-messages/captcha`)
-    captcha.value = r
-  } catch { /* silent */ }
+  await refreshCaptcha()
 })
 
 async function refreshCaptcha() {
   try {
     captcha.value = await $fetch<{ question: string; token: string }>(`${config.public.apiUrl}/contact-messages/captcha`)
-  } catch { /* silent — l'utilisateur réessaiera */ }
+  } catch { /* silent */ }
 }
 
 async function submit() {
@@ -59,7 +56,6 @@ async function submit() {
     const data = (e as { data?: { message?: string } }).data
     error.value = data?.message ?? "Erreur d'envoi"
   } finally {
-    // Toujours renouveler le captcha (succès = nouveau token, échec = nouvelle question)
     await refreshCaptcha()
     submitting.value = false
   }
