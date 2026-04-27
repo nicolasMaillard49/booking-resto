@@ -13,19 +13,19 @@ async function fetch() {
 async function open(m: any) {
   selected.value = m
   if (!m.isRead) {
-    await apiFetch(`/admin/contact-messages/${m.id}`, { method: 'PATCH', body: JSON.stringify({ isRead: true }) } as any)
+    await apiFetch(`/admin/contact-messages/${m.id}`, { method: 'PATCH', body: { isRead: true } })
     m.isRead = true
   }
 }
 
 async function toggleRead() {
   selected.value.isRead = !selected.value.isRead
-  await apiFetch(`/admin/contact-messages/${selected.value.id}`, { method: 'PATCH', body: JSON.stringify({ isRead: selected.value.isRead }) } as any)
+  await apiFetch(`/admin/contact-messages/${selected.value.id}`, { method: 'PATCH', body: { isRead: selected.value.isRead } })
 }
 
 async function del() {
   if (!confirm('Supprimer ce message ?')) return
-  await apiFetch(`/admin/contact-messages/${selected.value.id}`, { method: 'DELETE' } as any)
+  await apiFetch(`/admin/contact-messages/${selected.value.id}`, { method: 'DELETE' })
   selected.value = null
   await fetch()
 }

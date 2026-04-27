@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
@@ -27,19 +27,11 @@ export class ServiceWindowsService {
 
   async update(id: string, dto: Partial<{ label: string; daysOfWeek: number[]; startTime: string; endTime: string; isActive: boolean }>) {
     if (dto.startTime && dto.endTime) this.validateTimes(dto.startTime, dto.endTime);
-    try {
-      return await this.prisma.serviceWindow.update({ where: { id }, data: dto });
-    } catch {
-      throw new NotFoundException();
-    }
+    return this.prisma.serviceWindow.update({ where: { id }, data: dto });
   }
 
   async remove(id: string) {
-    try {
-      return await this.prisma.serviceWindow.delete({ where: { id } });
-    } catch {
-      throw new NotFoundException();
-    }
+    return this.prisma.serviceWindow.delete({ where: { id } });
   }
 
   async reorder(ids: string[]) {

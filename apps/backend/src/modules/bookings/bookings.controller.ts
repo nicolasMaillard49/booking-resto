@@ -53,7 +53,7 @@ export class BookingsController {
   @ApiBearerAuth() @UseGuards(JwtAuthGuard)
   @Patch('admin/bookings/:id')
   update(@Param('id') id: string, @Body() dto: UpdateBookingDto) {
-    return this.bookings.update(id, dto as any);
+    return this.bookings.update(id, dto);
   }
 
   @ApiBearerAuth() @UseGuards(JwtAuthGuard)

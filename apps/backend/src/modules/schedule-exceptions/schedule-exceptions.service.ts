@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
@@ -19,8 +19,7 @@ export class ScheduleExceptionsService {
   }
 
   async remove(id: string) {
-    try { return await this.prisma.scheduleException.delete({ where: { id } }); }
-    catch { throw new NotFoundException(); }
+    return this.prisma.scheduleException.delete({ where: { id } });
   }
 
   async isDateBlocked(date: Date): Promise<boolean> {

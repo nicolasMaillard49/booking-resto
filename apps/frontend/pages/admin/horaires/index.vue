@@ -1,7 +1,7 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'admin', middleware: 'admin-auth' })
 const { apiFetch } = useAuth()
-const { success: showToast } = useToast()
+const { success: showToast, error: showError } = useToast()
 
 const windows = ref<any[]>([])
 const exceptions = ref<any[]>([])
@@ -39,21 +39,25 @@ function toggleDay(d: number) {
 }
 
 async function submitWindow() {
-  if (!windowModal.form.daysOfWeek.length) { alert('Sélectionner au moins un jour'); return }
-  const body = JSON.stringify(windowModal.form)
-  if (windowModal.editing) {
-    await apiFetch(`/service-windows/${windowModal.editing.id}`, { method: 'PATCH', body } as any)
-  } else {
-    await apiFetch('/service-windows', { method: 'POST', body } as any)
+  if (!windowModal.form.daysOfWeek.length) { showError('Sélectionner au moins un jour'); return }
+  const body = { ...windowModal.form }
+  try {
+    if (windowModal.editing) {
+      await apiFetch(`/service-windows/${windowModal.editing.id}`, { method: 'PATCH', body })
+    } else {
+      await apiFetch('/service-windows', { method: 'POST', body })
+    }
+    windowModal.open = false
+    showToast('Plage enregistrée')
+    await fetchAll()
+  } catch (e) {
+    showError(extractError(e))
   }
-  windowModal.open = false
-  showToast('Plage enregistrée')
-  await fetchAll()
 }
 
 async function deleteWindow(id: string) {
   if (!confirm('Supprimer cette plage ?')) return
-  await apiFetch(`/service-windows/${id}`, { method: 'DELETE' } as any)
+  await apiFetch(`/service-windows/${id}`, { method: 'DELETE' })
   await fetchAll()
 }
 
@@ -63,20 +67,32 @@ function openExceptionModal() {
 }
 
 async function submitException() {
-  await apiFetch('/schedule-exceptions', { method: 'POST', body: JSON.stringify(exceptionModal.form) } as any)
-  exceptionModal.open = false
-  showToast('Fermeture ajoutée')
-  await fetchAll()
+  try {
+    await apiFetch('/schedule-exceptions', { method: 'POST', body: { ...exceptionModal.form } })
+    exceptionModal.open = false
+    showToast('Fermeture ajoutée')
+    await fetchAll()
+  } catch (e) {
+    showError(extractError(e))
+  }
 }
 
 async function deleteException(id: string) {
   if (!confirm('Supprimer ?')) return
-  await apiFetch(`/schedule-exceptions/${id}`, { method: 'DELETE' } as any)
+  await apiFetch(`/schedule-exceptions/${id}`, { method: 'DELETE' })
   await fetchAll()
 }
 
 function formatDays(d: number[]) { return d.map(i => DAY_NAMES[i]).join(' ') }
 function formatDate(iso: string) { return new Date(iso).toLocaleDateString('fr-FR') }
+
+function extractError(e: unknown): string {
+  if (e && typeof e === 'object' && 'data' in e) {
+    const data = (e as { data?: { message?: string } }).data
+    return data?.message ?? 'Erreur inconnue'
+  }
+  return e instanceof Error ? e.message : 'Erreur inconnue'
+}
 </script>
 
 <template>

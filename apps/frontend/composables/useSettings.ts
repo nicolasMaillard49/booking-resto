@@ -10,8 +10,8 @@ export function useSettings() {
   async function save(payload: Partial<Record<string, string>>) {
     const r = await apiFetch<Record<string, string>>('/admin/settings', {
       method: 'PUT',
-      body: JSON.stringify(payload),
-    } as any)
+      body: payload,
+    })
     settings.value = r
   }
 

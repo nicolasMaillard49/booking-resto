@@ -1,7 +1,7 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'admin', middleware: 'admin-auth' })
 const { settings, load, save } = useSettings()
-const { success: showToast } = useToast()
+const { success: showToast, error: showError } = useToast()
 const local = reactive<Record<string, string>>({})
 const loaded = ref(false)
 const saving = ref(false)
@@ -17,8 +17,9 @@ async function onSave() {
   try {
     await save(local)
     showToast('Paramètres enregistrés')
-  } catch (e: any) {
-    alert(e?.data?.message ?? 'Erreur')
+  } catch (e) {
+    const data = (e as { data?: { message?: string } }).data
+    showError(data?.message ?? 'Erreur')
   } finally {
     saving.value = false
   }

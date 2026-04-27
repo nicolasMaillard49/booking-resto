@@ -1,7 +1,7 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'admin', middleware: 'admin-auth' })
 const { apiFetch } = useAuth()
-const { success: showToast } = useToast()
+const { success: showToast, error: showError } = useToast()
 
 const items = ref<any[]>([])
 const total = ref(0)
@@ -27,9 +27,19 @@ async function fetch() {
 
 async function patch(id: string, newStatus: string) {
   if (!confirm(`Passer cette réservation en ${newStatus} ?`)) return
-  await apiFetch(`/admin/bookings/${id}`, { method: 'PATCH', body: JSON.stringify({ status: newStatus }) } as any)
-  showToast(`Réservation ${newStatus.toLowerCase()}`)
-  await fetch()
+  try {
+    await apiFetch(`/admin/bookings/${id}`, { method: 'PATCH', body: { status: newStatus } })
+    showToast(`Réservation ${newStatus.toLowerCase()}`)
+    await fetch()
+  } catch (e) { showError(extractError(e)) }
+}
+
+function extractError(e: unknown): string {
+  if (e && typeof e === 'object' && 'data' in e) {
+    const data = (e as { data?: { message?: string } }).data
+    return data?.message ?? 'Erreur inconnue'
+  }
+  return e instanceof Error ? e.message : 'Erreur inconnue'
 }
 
 function formatDateTime(iso: string) {

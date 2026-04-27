@@ -9,6 +9,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { PrismaExceptionFilter } from './common/filters/prisma-exception.filter';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 
 async function bootstrap() {
@@ -43,7 +44,8 @@ async function bootstrap() {
   );
 
   // ── Filtres et intercepteurs globaux ─────────────────────
-  app.useGlobalFilters(new HttpExceptionFilter());
+  // Ordre important : Prisma filter en premier (plus spécifique), HTTP en fallback
+  app.useGlobalFilters(new PrismaExceptionFilter(), new HttpExceptionFilter());
   app.useGlobalInterceptors(new TransformInterceptor());
 
   // ── Swagger ───────────────────────────────────────────────

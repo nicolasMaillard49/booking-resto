@@ -1,12 +1,22 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post, Query, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ImageSection } from '@prisma/client';
 import type { Response } from 'express';
 import { Public } from '../../common/decorators/public.decorator';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { ImagesService } from './images.service';
 import { UpdateImageDto } from './dto/update-image.dto';
 import { ReorderImagesDto } from './dto/reorder-images.dto';
+
+const VALID_SECTIONS = new Set<string>(['HERO', 'HOMESECTION', 'MENU', 'OTHER']);
+
+function parseSection(value: string | undefined): ImageSection {
+  if (!value || !VALID_SECTIONS.has(value)) {
+    throw new BadRequestException(`section invalide (attendu: HERO|HOMESECTION|MENU|OTHER)`);
+  }
+  return value as ImageSection;
+}
 
 @ApiTags('images')
 @Controller()
@@ -36,7 +46,7 @@ export class ImagesController {
     @Body('height') height?: string,
   ) {
     return this.images.upload({
-      section,
+      section: parseSection(section),
       mimeType: file.mimetype,
       size: file.size,
       buffer: file.buffer,
@@ -49,7 +59,7 @@ export class ImagesController {
   @ApiBearerAuth() @UseGuards(JwtAuthGuard)
   @Get('admin/images')
   list(@Query('section') section: string) {
-    return this.images.findBySection(section);
+    return this.images.findBySection(parseSection(section));
   }
 
   @ApiBearerAuth() @UseGuards(JwtAuthGuard)
@@ -58,7 +68,7 @@ export class ImagesController {
 
   @ApiBearerAuth() @UseGuards(JwtAuthGuard)
   @Patch('admin/images/:id')
-  update(@Param('id') id: string, @Body() dto: UpdateImageDto) { return this.images.update(id, dto as any); }
+  update(@Param('id') id: string, @Body() dto: UpdateImageDto) { return this.images.update(id, dto); }
 
   @ApiBearerAuth() @UseGuards(JwtAuthGuard)
   @Delete('admin/images/:id')

@@ -2,6 +2,7 @@
 definePageMeta({ layout: 'admin', middleware: 'admin-auth' })
 const { apiFetch } = useAuth()
 const { upload } = useImageUpload()
+const { error: showError } = useToast()
 const config = useRuntimeConfig()
 const apiUrl = config.public.apiUrl
 
@@ -17,16 +18,24 @@ async function onUpload(e: Event) {
   const file = (e.target as HTMLInputElement).files?.[0]
   if (!file) return
   try { await upload(file, filter.value); await fetch() }
-  catch (err: any) { alert(err.message) }
+  catch (err) { showError(extractError(err)) }
 }
 
 async function del(id: string) {
   if (!confirm('Supprimer ?')) return
-  try { await apiFetch(`/admin/images/${id}`, { method: 'DELETE' } as any); await fetch() }
-  catch (e: any) { alert(e?.data?.message ?? 'Erreur') }
+  try { await apiFetch(`/admin/images/${id}`, { method: 'DELETE' }); await fetch() }
+  catch (e) { showError(extractError(e)) }
 }
 
 function formatSize(b: number) { return `${(b / 1024).toFixed(1)} Ko` }
+
+function extractError(e: unknown): string {
+  if (e && typeof e === 'object' && 'data' in e) {
+    const data = (e as { data?: { message?: string } }).data
+    return data?.message ?? 'Erreur inconnue'
+  }
+  return e instanceof Error ? e.message : 'Erreur inconnue'
+}
 </script>
 
 <template>

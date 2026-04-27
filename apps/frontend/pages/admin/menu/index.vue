@@ -1,7 +1,7 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'admin', middleware: 'admin-auth' })
 const { apiFetch } = useAuth()
-const { success: showToast } = useToast()
+const { success: showToast, error: showError } = useToast()
 const { upload } = useImageUpload()
 const config = useRuntimeConfig()
 const apiUrl = config.public.apiUrl
@@ -32,34 +32,48 @@ async function onFile(e: Event) {
   try {
     const r = await upload(file, 'MENU')
     modal.form.fileId = r.id
-  } catch (err: any) { alert(err.message) }
+  } catch (err) { showError(extractError(err)) }
   finally { modal.uploading = false }
 }
 
 async function submit() {
-  const body = JSON.stringify(modal.form)
-  if (modal.editing) {
-    await apiFetch(`/admin/menu-documents/${modal.editing.id}`, { method: 'PATCH', body } as any)
-  } else {
-    await apiFetch('/admin/menu-documents', { method: 'POST', body } as any)
-  }
-  modal.open = false
-  showToast('Menu enregistré')
-  await fetch()
+  const body = { ...modal.form }
+  try {
+    if (modal.editing) {
+      await apiFetch(`/admin/menu-documents/${modal.editing.id}`, { method: 'PATCH', body })
+    } else {
+      await apiFetch('/admin/menu-documents', { method: 'POST', body })
+    }
+    modal.open = false
+    showToast('Menu enregistré')
+    await fetch()
+  } catch (e) { showError(extractError(e)) }
 }
 
 async function del(id: string) {
   if (!confirm('Supprimer ?')) return
-  await apiFetch(`/admin/menu-documents/${id}`, { method: 'DELETE' } as any)
-  await fetch()
+  try {
+    await apiFetch(`/admin/menu-documents/${id}`, { method: 'DELETE' })
+    await fetch()
+  } catch (e) { showError(extractError(e)) }
 }
 
 async function move(idx: number, delta: number) {
   const arr = [...docs.value]
   const [item] = arr.splice(idx, 1)
   arr.splice(idx + delta, 0, item)
-  await apiFetch('/admin/menu-documents/reorder', { method: 'PATCH', body: JSON.stringify({ ids: arr.map(d => d.id) }) } as any)
-  docs.value = arr
+  try {
+    await apiFetch('/admin/menu-documents/reorder', { method: 'PATCH', body: { ids: arr.map(d => d.id) } })
+    docs.value = arr
+  } catch (e) { showError(extractError(e)) }
+}
+
+function extractError(e: unknown): string {
+  if (e && typeof e === 'object' && 'data' in e) {
+    const data = (e as { data?: { message?: string } }).data
+    return data?.message ?? 'Erreur inconnue'
+  }
+  return e instanceof Error ? e.message : 'Erreur inconnue'
 }
 </script>
 

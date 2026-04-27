@@ -39,6 +39,12 @@ onMounted(async () => {
   } catch { /* silent */ }
 })
 
+async function refreshCaptcha() {
+  try {
+    captcha.value = await $fetch<{ question: string; token: string }>(`${config.public.apiUrl}/contact-messages/captcha`)
+  } catch { /* silent — l'utilisateur réessaiera */ }
+}
+
 async function submit() {
   if (!captcha.value) return
   submitting.value = true; error.value = ''; success.value = false
@@ -49,12 +55,12 @@ async function submit() {
     })
     success.value = true
     Object.assign(form, { name: '', email: '', message: '', captchaAnswer: '' })
-    // Renouvelle le captcha pour permettre un autre envoi
-    const r = await $fetch<any>(`${config.public.apiUrl}/contact-messages/captcha`)
-    captcha.value = r
-  } catch (e: any) {
-    error.value = e?.data?.message ?? "Erreur d'envoi"
+  } catch (e) {
+    const data = (e as { data?: { message?: string } }).data
+    error.value = data?.message ?? "Erreur d'envoi"
   } finally {
+    // Toujours renouveler le captcha (succès = nouveau token, échec = nouvelle question)
+    await refreshCaptcha()
     submitting.value = false
   }
 }

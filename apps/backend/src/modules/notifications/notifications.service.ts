@@ -5,13 +5,31 @@ import { join } from 'node:path';
 import { MailerService } from './mailer/mailer.service';
 import { SettingsService } from '../settings/settings.service';
 import { EmailTemplate } from './mailer/types';
+import { Booking, ServiceWindow } from '@prisma/client';
+
+export type BookingForEmail = Booking & { serviceWindow?: ServiceWindow | null };
 
 const TEMPLATES_DIR = join(__dirname, 'templates');
 
-function render(html: string, data: Record<string, any>): string {
+type TemplateData = Record<string, string | number | null | undefined>;
+
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function render(html: string, data: TemplateData): string {
   return html
-    .replace(/\{\{#(\w+)\}\}([\s\S]*?)\{\{\/\1\}\}/g, (_, key, body) => data[key] ? body : '')
-    .replace(/\{\{(\w+)\}\}/g, (_, key) => (data[key] ?? '').toString());
+    .replace(/\{\{#(\w+)\}\}([\s\S]*?)\{\{\/\1\}\}/g, (_, key: string, body: string) => (data[key] ? body : ''))
+    .replace(/\{\{(\w+)\}\}/g, (_, key: string) => {
+      const v = data[key];
+      if (v === null || v === undefined) return '';
+      return escapeHtml(String(v));
+    });
 }
 
 @Injectable()
@@ -36,7 +54,7 @@ export class NotificationsService {
     }
   }
 
-  private async commonVars(): Promise<Record<string, any>> {
+  private async commonVars(): Promise<TemplateData> {
     return {
       brandName: await this.settings.getBrandName(),
       contactAddress: await this.settings.getContactAddress(),
@@ -46,7 +64,7 @@ export class NotificationsService {
     };
   }
 
-  private bookingVars(b: any) {
+  private bookingVars(b: BookingForEmail): TemplateData {
     const date = new Date(b.date);
     return {
       id: b.id,
@@ -62,14 +80,14 @@ export class NotificationsService {
     };
   }
 
-  private async sendTpl(tpl: EmailTemplate, to: string, subject: string, data: Record<string, any>) {
+  private async sendTpl(tpl: EmailTemplate, to: string, subject: string, data: TemplateData) {
     if (!to) return;
     const html = this.templates.get(tpl);
     if (!html) { this.logger.warn(`Skip ${tpl}: template manquant`); return; }
     await this.mailer.send({ to, subject, html: render(html, data) });
   }
 
-  async onBookingCreated(b: any) {
+  async onBookingCreated(b: BookingForEmail) {
     const common = await this.commonVars();
     const vars = { ...common, ...this.bookingVars(b) };
     if (b.status === 'CONFIRMED') {
@@ -81,14 +99,14 @@ export class NotificationsService {
       `Nouvelle réservation : ${b.partySize} couverts le ${vars.dateFormatted}`, vars);
   }
 
-  async onBookingConfirmedByAdmin(b: any) {
+  async onBookingConfirmedByAdmin(b: BookingForEmail) {
     const common = await this.commonVars();
     const vars = { ...common, ...this.bookingVars(b) };
     await this.sendTpl('booking-confirmed-after-pending', b.clientEmail,
       `Réservation confirmée — ${common.brandName}`, vars);
   }
 
-  async onBookingCancelled(b: any, by: 'admin' | 'client') {
+  async onBookingCancelled(b: BookingForEmail, by: 'admin' | 'client') {
     const common = await this.commonVars();
     const vars = { ...common, ...this.bookingVars(b) };
     if (by === 'admin') {
@@ -102,7 +120,7 @@ export class NotificationsService {
     }
   }
 
-  async onBookingReminder(b: any) {
+  async onBookingReminder(b: BookingForEmail) {
     const common = await this.commonVars();
     const vars = { ...common, ...this.bookingVars(b) };
     await this.sendTpl('booking-reminder', b.clientEmail,

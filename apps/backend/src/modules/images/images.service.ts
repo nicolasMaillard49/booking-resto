@@ -1,5 +1,18 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { ImageSection, Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
+
+export interface UploadImageInput {
+  section: ImageSection;
+  mimeType: string;
+  size: number;
+  buffer: Buffer;
+  caption?: string;
+  width?: number;
+  height?: number;
+}
+
+export type UpdateImageInput = Partial<{ caption: string; sortOrder: number; section: ImageSection }>;
 
 const MAX_SIZE = 5 * 1024 * 1024;
 const ALLOWED_MIMES = new Set(['image/jpeg', 'image/png', 'image/webp', 'application/pdf']);
@@ -23,7 +36,7 @@ function detectMime(buf: Buffer): string | null {
 export class ImagesService {
   constructor(private prisma: PrismaService) {}
 
-  async upload(input: { section: string; mimeType: string; size: number; buffer: Buffer; caption?: string; width?: number; height?: number }) {
+  async upload(input: UploadImageInput) {
     if (!ALLOWED_SECTIONS.has(input.section)) throw new BadRequestException('Section invalide');
     if (!ALLOWED_MIMES.has(input.mimeType))   throw new BadRequestException('mimeType non autorisé');
     if (input.size > MAX_SIZE)                throw new BadRequestException('Fichier trop volumineux (max 5 Mo)');
@@ -36,7 +49,7 @@ export class ImagesService {
     const isPdf = input.mimeType === 'application/pdf';
     return this.prisma.image.create({
       data: {
-        section: input.section as any,
+        section: input.section,
         mimeType: input.mimeType,
         size: input.size,
         width:  isPdf ? null : (input.width ?? 0),
@@ -48,9 +61,9 @@ export class ImagesService {
     });
   }
 
-  findBySection(section: string) {
+  findBySection(section: ImageSection) {
     return this.prisma.image.findMany({
-      where: { section: section as any },
+      where: { section },
       orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }],
       select: { id: true, section: true, mimeType: true, width: true, height: true, size: true, sortOrder: true, caption: true, createdAt: true },
     });
@@ -62,17 +75,14 @@ export class ImagesService {
     return img;
   }
 
-  async update(id: string, dto: { caption?: string; sortOrder?: number; section?: string }) {
-    try { return await this.prisma.image.update({ where: { id }, data: dto as any }); }
-    catch { throw new NotFoundException(); }
+  async update(id: string, dto: UpdateImageInput) {
+    return this.prisma.image.update({ where: { id }, data: dto });
   }
 
   async remove(id: string) {
-    try { return await this.prisma.image.delete({ where: { id } }); }
-    catch (e: any) {
-      if (e.code === 'P2003') throw new BadRequestException('Image utilisée par un MenuDocument, désassocier d\'abord');
-      throw new NotFoundException();
-    }
+    // P2003 (FK violation, image référencée par MenuDocument) et P2025 (not found)
+    // sont gérés globalement par PrismaExceptionFilter.
+    return this.prisma.image.delete({ where: { id } });
   }
 
   async reorder(ids: string[]) {

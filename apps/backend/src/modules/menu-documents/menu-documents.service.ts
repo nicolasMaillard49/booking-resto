@@ -1,5 +1,14 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
+
+export interface CreateMenuDocumentInput {
+  title: string;
+  description?: string;
+  fileId: string;
+  isPublished?: boolean;
+}
+
+export type UpdateMenuDocumentInput = Partial<CreateMenuDocumentInput>;
 
 @Injectable()
 export class MenuDocumentsService {
@@ -20,7 +29,7 @@ export class MenuDocumentsService {
     });
   }
 
-  async create(dto: { title: string; description?: string; fileId: string; isPublished?: boolean }) {
+  async create(dto: CreateMenuDocumentInput) {
     const max = await this.prisma.menuDocument.aggregate({ _max: { sortOrder: true } });
     return this.prisma.menuDocument.create({
       data: {
@@ -33,14 +42,12 @@ export class MenuDocumentsService {
     });
   }
 
-  async update(id: string, dto: any) {
-    try { return await this.prisma.menuDocument.update({ where: { id }, data: dto }); }
-    catch { throw new NotFoundException(); }
+  async update(id: string, dto: UpdateMenuDocumentInput) {
+    return this.prisma.menuDocument.update({ where: { id }, data: dto });
   }
 
   async remove(id: string) {
-    try { return await this.prisma.menuDocument.delete({ where: { id } }); }
-    catch { throw new NotFoundException(); }
+    return this.prisma.menuDocument.delete({ where: { id } });
   }
 
   async reorder(ids: string[]) {

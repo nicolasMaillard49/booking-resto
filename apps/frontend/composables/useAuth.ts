@@ -65,10 +65,17 @@ export function useAuth() {
     return token ? { Authorization: `Bearer ${token}` } : {}
   }
 
-  async function apiFetch<T>(path: string, options: RequestInit & { params?: Record<string, unknown> } = {}): Promise<T> {
-    const { params, ...fetchOptions } = options
+  type ApiFetchOptions = {
+    method?: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE'
+    body?: unknown
+    params?: Record<string, unknown>
+    headers?: Record<string, string>
+  }
+
+  async function apiFetch<T>(path: string, options: ApiFetchOptions = {}): Promise<T> {
+    const { params, body, ...rest } = options
     const url = new URL(`${baseUrl}${path}`)
-    
+
     if (params) {
       Object.entries(params).forEach(([k, v]) => {
         if (v !== undefined && v !== null) {
@@ -78,11 +85,13 @@ export function useAuth() {
     }
 
     return $fetch<T>(url.toString(), {
-      ...fetchOptions,
+      ...rest,
+      // ofetch sérialise automatiquement les objets ; ne définir Content-Type que si body présent
+      body: body as Record<string, unknown> | undefined,
       headers: {
         ...getAuthHeader(),
-        'Content-Type': 'application/json',
-        ...(fetchOptions.headers || {}),
+        ...(body !== undefined ? { 'Content-Type': 'application/json' } : {}),
+        ...(rest.headers || {}),
       },
     })
   }
