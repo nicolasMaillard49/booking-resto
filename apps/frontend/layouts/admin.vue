@@ -65,7 +65,7 @@ watch(() => route.path, () => {
           <p class="text-xs text-neutral-400 truncate">{{ currentUser?.email }}</p>
         </div>
         <button
-          class="lg:hidden p-1.5 -mr-1 rounded-lg text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700 transition-colors"
+          class="lg:hidden p-1.5 -mr-1 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700 transition-colors"
           @click="mobileOpen = false"
           aria-label="Fermer le menu"
         >
@@ -80,7 +80,7 @@ watch(() => route.path, () => {
           :key="item.path"
           :to="item.path"
           :class="[
-            'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors group',
+            'flex items-center gap-3 px-3 py-2.5 text-sm transition-colors group',
             isActive(item.path)
               ? 'bg-primary-50 text-primary-700 font-semibold'
               : 'text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900'
@@ -103,7 +103,7 @@ watch(() => route.path, () => {
       <div class="px-3 py-4 border-t border-neutral-100">
         <button
           @click="logout"
-          class="flex items-center gap-3 px-3 py-2.5 w-full rounded-lg text-sm text-neutral-500 hover:bg-red-50 hover:text-red-600 transition-colors group"
+          class="flex items-center gap-3 px-3 py-2.5 w-full text-sm text-neutral-500 hover:bg-red-50 hover:text-red-600 transition-colors group"
         >
           <LogOut :size="18" :stroke-width="1.8" class="shrink-0 text-neutral-400 group-hover:text-red-500 transition-colors" />
           Déconnexion
@@ -116,7 +116,7 @@ watch(() => route.path, () => {
       <!-- Mobile header -->
       <header class="lg:hidden bg-white border-b border-neutral-100 sticky top-0 z-30 px-4 h-14 flex items-center justify-between">
         <button
-          class="p-2 -ml-2 rounded-lg text-neutral-600 hover:bg-neutral-100 transition-colors"
+          class="p-2 -ml-2 text-neutral-600 hover:bg-neutral-100 transition-colors"
           @click="mobileOpen = true"
           aria-label="Ouvrir le menu"
         >

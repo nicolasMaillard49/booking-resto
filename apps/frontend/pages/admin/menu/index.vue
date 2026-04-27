@@ -81,13 +81,13 @@ function extractError(e: unknown): string {
   <div>
     <div class="flex items-center justify-between mb-6">
       <h1 class="text-2xl font-bold text-neutral-900">Menu</h1>
-      <button @click="openModal()" class="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm hover:bg-primary-700">+ Ajouter un menu</button>
+      <button @click="openModal()" class="px-4 py-2 bg-primary-600 text-white text-sm hover:bg-primary-700">+ Ajouter un menu</button>
     </div>
 
     <ul class="space-y-3">
-      <li v-for="(d, i) in docs" :key="d.id" class="bg-white border border-neutral-100 rounded-xl p-4 flex items-center gap-4">
+      <li v-for="(d, i) in docs" :key="d.id" class="bg-white border border-neutral-100 p-4 flex items-center gap-4">
         <span class="text-neutral-400 text-sm w-8">#{{ i + 1 }}</span>
-        <div class="h-16 w-16 bg-neutral-100 rounded flex items-center justify-center text-2xl">
+        <div class="h-16 w-16 bg-neutral-100 flex items-center justify-center text-2xl">
           {{ d.file.mimeType === 'application/pdf' ? '📄' : '🖼️' }}
         </div>
         <div class="flex-1 min-w-0">
@@ -107,13 +107,13 @@ function extractError(e: unknown): string {
 
     <Teleport to="body">
       <div v-if="modal.open" class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-6">
-        <div class="bg-white rounded-xl p-6 max-w-xl w-full">
+        <div class="bg-white p-6 max-w-xl w-full">
           <h3 class="text-lg font-semibold mb-4">{{ modal.editing ? 'Modifier' : 'Ajouter' }} un menu</h3>
           <form @submit.prevent="submit" class="space-y-4">
             <div><label class="block text-sm mb-1">Titre</label>
-              <input v-model="modal.form.title" required class="w-full px-3 py-2 border border-neutral-200 rounded-lg" /></div>
+              <input v-model="modal.form.title" required class="w-full px-3 py-2 border border-neutral-200" /></div>
             <div><label class="block text-sm mb-1">Description (optionnelle)</label>
-              <textarea v-model="modal.form.description" rows="3" class="w-full px-3 py-2 border border-neutral-200 rounded-lg"></textarea></div>
+              <textarea v-model="modal.form.description" rows="3" class="w-full px-3 py-2 border border-neutral-200"></textarea></div>
             <div>
               <label class="block text-sm mb-1">Fichier (image ou PDF, max 5 Mo)</label>
               <div v-if="modal.form.fileId" class="mb-2 text-sm">
@@ -126,8 +126,8 @@ function extractError(e: unknown): string {
               <input v-model="modal.form.isPublished" type="checkbox" /> Publié
             </label>
             <div class="flex gap-2 justify-end">
-              <button type="button" @click="modal.open = false" class="px-4 py-2 border border-neutral-200 rounded-lg">Annuler</button>
-              <button type="submit" :disabled="modal.uploading || !modal.form.fileId" class="px-4 py-2 bg-primary-600 text-white rounded-lg disabled:opacity-50">Enregistrer</button>
+              <button type="button" @click="modal.open = false" class="px-4 py-2 border border-neutral-200">Annuler</button>
+              <button type="submit" :disabled="modal.uploading || !modal.form.fileId" class="px-4 py-2 bg-primary-600 text-white disabled:opacity-50">Enregistrer</button>
             </div>
           </form>
         </div>

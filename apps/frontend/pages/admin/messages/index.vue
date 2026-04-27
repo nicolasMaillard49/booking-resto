@@ -36,7 +36,7 @@ function formatDate(iso: string) { return new Date(iso).toLocaleString('fr-FR') 
 <template>
   <div>
     <h1 class="text-2xl font-bold text-neutral-900 mb-6">Messages</h1>
-    <div class="bg-white border border-neutral-100 rounded-xl overflow-hidden">
+    <div class="bg-white border border-neutral-100 overflow-hidden">
       <ul>
         <li v-for="m in items" :key="m.id"
           @click="open(m)"
@@ -59,9 +59,9 @@ function formatDate(iso: string) { return new Date(iso).toLocaleString('fr-FR') 
           <p class="text-xs text-neutral-400 mb-4">{{ formatDate(selected.createdAt) }}</p>
           <p class="whitespace-pre-line">{{ selected.message }}</p>
           <div class="mt-6 flex gap-2 flex-wrap">
-            <button @click="toggleRead" class="px-3 py-2 border border-neutral-200 rounded-lg text-sm">{{ selected.isRead ? 'Marquer non lu' : 'Marquer lu' }}</button>
-            <button @click="del" class="px-3 py-2 border border-red-700 text-red-700 text-sm rounded-lg hover:bg-red-700 hover:text-white">Supprimer</button>
-            <button @click="selected = null" class="ml-auto px-3 py-2 border border-neutral-200 rounded-lg text-sm">Fermer</button>
+            <button @click="toggleRead" class="px-3 py-2 border border-neutral-200 text-sm">{{ selected.isRead ? 'Marquer non lu' : 'Marquer lu' }}</button>
+            <button @click="del" class="px-3 py-2 border border-red-700 text-red-700 text-sm hover:bg-red-700 hover:text-white">Supprimer</button>
+            <button @click="selected = null" class="ml-auto px-3 py-2 border border-neutral-200 text-sm">Fermer</button>
           </div>
         </div>
       </div>

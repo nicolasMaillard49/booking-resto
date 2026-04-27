@@ -27,7 +27,7 @@ const typeIcons: Record<string, string> = {
         v-for="toast in toasts"
         :key="toast.id"
         :class="[
-          'flex items-start gap-3 px-4 py-3 rounded-xl shadow-lg pointer-events-auto',
+          'flex items-start gap-3 px-4 py-3 shadow-lg pointer-events-auto',
           typeClasses[toast.type] || 'bg-neutral-800 text-white'
         ]"
         role="alert"

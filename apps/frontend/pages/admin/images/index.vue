@@ -43,23 +43,23 @@ function extractError(e: unknown): string {
     <div class="flex items-center justify-between mb-6 gap-3 flex-wrap">
       <h1 class="text-2xl font-bold text-neutral-900">Images & Fichiers</h1>
       <div class="flex gap-2">
-        <select v-model="filter" @change="fetch" class="px-3 py-2 border border-neutral-200 rounded-lg text-sm">
+        <select v-model="filter" @change="fetch" class="px-3 py-2 border border-neutral-200 text-sm">
           <option value="HERO">Hero</option>
           <option value="HOMESECTION">Sections home</option>
           <option value="MENU">Menu</option>
           <option value="OTHER">Autre</option>
         </select>
-        <label class="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm cursor-pointer hover:bg-primary-700">
+        <label class="px-4 py-2 bg-primary-600 text-white text-sm cursor-pointer hover:bg-primary-700">
           + Upload
           <input type="file" accept="image/*,application/pdf" @change="onUpload" class="hidden" />
         </label>
       </div>
     </div>
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <div v-for="img in items" :key="img.id" class="bg-white border border-neutral-100 rounded-xl p-3">
-        <div class="aspect-square flex items-center justify-center bg-neutral-100 rounded mb-2">
+      <div v-for="img in items" :key="img.id" class="bg-white border border-neutral-100 p-3">
+        <div class="aspect-square flex items-center justify-center bg-neutral-100 mb-2">
           <span v-if="img.mimeType === 'application/pdf'" class="text-4xl">📄</span>
-          <img v-else :src="`${apiUrl}/images/${img.id}`" class="w-full h-full object-cover rounded" />
+          <img v-else :src="`${apiUrl}/images/${img.id}`" class="w-full h-full object-cover" />
         </div>
         <p class="text-xs text-neutral-500 truncate">{{ img.mimeType }} · {{ formatSize(img.size) }}</p>
         <button @click="del(img.id)" class="mt-1 text-xs text-red-700 hover:underline">Supprimer</button>

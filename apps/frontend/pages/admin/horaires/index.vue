@@ -102,10 +102,10 @@ function extractError(e: unknown): string {
     <section>
       <div class="flex items-center justify-between mb-4">
         <h2 class="text-lg font-semibold text-neutral-900">Plages de service</h2>
-        <button @click="openWindowModal()" class="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm hover:bg-primary-700">+ Ajouter</button>
+        <button @click="openWindowModal()" class="px-4 py-2 bg-primary-600 text-white text-sm hover:bg-primary-700">+ Ajouter</button>
       </div>
       <div class="space-y-2">
-        <div v-for="w in windows" :key="w.id" class="bg-white border border-neutral-100 rounded-xl p-4 flex items-center justify-between">
+        <div v-for="w in windows" :key="w.id" class="bg-white border border-neutral-100 p-4 flex items-center justify-between">
           <div>
             <p class="font-medium">{{ w.label }} <span v-if="!w.isActive" class="text-xs text-neutral-400">(inactive)</span></p>
             <p class="text-sm text-neutral-500">{{ formatDays(w.daysOfWeek) }} · {{ w.startTime }} → {{ w.endTime }}</p>
@@ -121,9 +121,9 @@ function extractError(e: unknown): string {
     <section>
       <div class="flex items-center justify-between mb-4">
         <h2 class="text-lg font-semibold text-neutral-900">Fermetures exceptionnelles</h2>
-        <button @click="openExceptionModal()" class="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm hover:bg-primary-700">+ Ajouter</button>
+        <button @click="openExceptionModal()" class="px-4 py-2 bg-primary-600 text-white text-sm hover:bg-primary-700">+ Ajouter</button>
       </div>
-      <div class="bg-white border border-neutral-100 rounded-xl overflow-hidden">
+      <div class="bg-white border border-neutral-100 overflow-hidden">
         <table class="w-full text-sm">
           <thead class="bg-neutral-50 text-left text-neutral-500">
             <tr><th class="p-3">Du</th><th class="p-3">Au</th><th class="p-3">Raison</th><th class="p-3"></th></tr>
@@ -143,18 +143,18 @@ function extractError(e: unknown): string {
 
     <Teleport to="body">
       <div v-if="windowModal.open" class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-6">
-        <div class="bg-white rounded-xl p-6 max-w-md w-full">
+        <div class="bg-white p-6 max-w-md w-full">
           <h3 class="text-lg font-semibold mb-4">{{ windowModal.editing ? 'Modifier' : 'Ajouter' }} une plage</h3>
           <form @submit.prevent="submitWindow" class="space-y-4">
             <div>
               <label class="block text-sm mb-1">Libellé</label>
-              <input v-model="windowModal.form.label" required class="w-full px-3 py-2 border border-neutral-200 rounded-lg" />
+              <input v-model="windowModal.form.label" required class="w-full px-3 py-2 border border-neutral-200" />
             </div>
             <div>
               <label class="block text-sm mb-2">Jours</label>
               <div class="flex gap-2">
                 <button v-for="i in 7" :key="i" type="button" @click="toggleDay(i)"
-                  :class="['w-12 py-2 border rounded-lg text-sm', windowModal.form.daysOfWeek.includes(i) ? 'bg-primary-600 text-white border-primary-600' : 'border-neutral-200']">
+                  :class="['w-12 py-2 border text-sm', windowModal.form.daysOfWeek.includes(i) ? 'bg-primary-600 text-white border-primary-600' : 'border-neutral-200']">
                   {{ DAY_NAMES[i] }}
                 </button>
               </div>
@@ -162,19 +162,19 @@ function extractError(e: unknown): string {
             <div class="flex gap-3">
               <div class="flex-1">
                 <label class="block text-sm mb-1">Début</label>
-                <input v-model="windowModal.form.startTime" required pattern="[0-2][0-9]:[0-5][0-9]" class="w-full px-3 py-2 border border-neutral-200 rounded-lg" />
+                <input v-model="windowModal.form.startTime" required pattern="[0-2][0-9]:[0-5][0-9]" class="w-full px-3 py-2 border border-neutral-200" />
               </div>
               <div class="flex-1">
                 <label class="block text-sm mb-1">Fin</label>
-                <input v-model="windowModal.form.endTime" required pattern="[0-2][0-9]:[0-5][0-9]" class="w-full px-3 py-2 border border-neutral-200 rounded-lg" />
+                <input v-model="windowModal.form.endTime" required pattern="[0-2][0-9]:[0-5][0-9]" class="w-full px-3 py-2 border border-neutral-200" />
               </div>
             </div>
             <label class="flex items-center gap-2 text-sm">
               <input v-model="windowModal.form.isActive" type="checkbox" /> Active
             </label>
             <div class="flex gap-2 justify-end">
-              <button type="button" @click="windowModal.open = false" class="px-4 py-2 border border-neutral-200 rounded-lg">Annuler</button>
-              <button type="submit" class="px-4 py-2 bg-primary-600 text-white rounded-lg">Enregistrer</button>
+              <button type="button" @click="windowModal.open = false" class="px-4 py-2 border border-neutral-200">Annuler</button>
+              <button type="submit" class="px-4 py-2 bg-primary-600 text-white">Enregistrer</button>
             </div>
           </form>
         </div>
@@ -183,18 +183,18 @@ function extractError(e: unknown): string {
 
     <Teleport to="body">
       <div v-if="exceptionModal.open" class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-6">
-        <div class="bg-white rounded-xl p-6 max-w-md w-full">
+        <div class="bg-white p-6 max-w-md w-full">
           <h3 class="text-lg font-semibold mb-4">Ajouter une fermeture</h3>
           <form @submit.prevent="submitException" class="space-y-4">
             <div><label class="block text-sm mb-1">Date début</label>
-              <input v-model="exceptionModal.form.startDate" required type="date" class="w-full px-3 py-2 border border-neutral-200 rounded-lg" /></div>
+              <input v-model="exceptionModal.form.startDate" required type="date" class="w-full px-3 py-2 border border-neutral-200" /></div>
             <div><label class="block text-sm mb-1">Date fin</label>
-              <input v-model="exceptionModal.form.endDate" required type="date" class="w-full px-3 py-2 border border-neutral-200 rounded-lg" /></div>
+              <input v-model="exceptionModal.form.endDate" required type="date" class="w-full px-3 py-2 border border-neutral-200" /></div>
             <div><label class="block text-sm mb-1">Raison (optionnel)</label>
-              <input v-model="exceptionModal.form.reason" class="w-full px-3 py-2 border border-neutral-200 rounded-lg" /></div>
+              <input v-model="exceptionModal.form.reason" class="w-full px-3 py-2 border border-neutral-200" /></div>
             <div class="flex gap-2 justify-end">
-              <button type="button" @click="exceptionModal.open = false" class="px-4 py-2 border border-neutral-200 rounded-lg">Annuler</button>
-              <button type="submit" class="px-4 py-2 bg-primary-600 text-white rounded-lg">Enregistrer</button>
+              <button type="button" @click="exceptionModal.open = false" class="px-4 py-2 border border-neutral-200">Annuler</button>
+              <button type="submit" class="px-4 py-2 bg-primary-600 text-white">Enregistrer</button>
             </div>
           </form>
         </div>

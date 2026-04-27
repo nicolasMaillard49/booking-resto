@@ -44,7 +44,7 @@ const typeClasses: Record<string, string> = {
       <div
         v-for="toast in toasts"
         :key="toast.id"
-        :class="['flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg pointer-events-auto', typeClasses[toast.type]]"
+        :class="['flex items-center gap-3 px-4 py-3 shadow-lg pointer-events-auto', typeClasses[toast.type]]"
         role="alert"
       >
         <p class="text-sm flex-1">{{ toast.message }}</p>

@@ -64,10 +64,10 @@ onMounted(fetch)
 
     <AdminWeekAgendaCard />
 
-    <div class="bg-white border border-neutral-100 rounded-xl overflow-hidden">
+    <div class="bg-white border border-neutral-100 overflow-hidden">
       <div class="p-4 border-b border-neutral-100 flex gap-3 flex-wrap">
-        <input v-model="search" @input="debouncedFetch" placeholder="Recherche nom/email/tél" class="px-3 py-2 border border-neutral-200 rounded-lg text-sm flex-1 min-w-[200px]" />
-        <select v-model="status" @change="fetch" class="px-3 py-2 border border-neutral-200 rounded-lg text-sm">
+        <input v-model="search" @input="debouncedFetch" placeholder="Recherche nom/email/tél" class="px-3 py-2 border border-neutral-200 text-sm flex-1 min-w-[200px]" />
+        <select v-model="status" @change="fetch" class="px-3 py-2 border border-neutral-200 text-sm">
           <option value="">Tous statuts</option>
           <option value="PENDING">En attente</option>
           <option value="CONFIRMED">Confirmé</option>
@@ -90,7 +90,7 @@ onMounted(fetch)
               <td class="p-3 font-medium">{{ b.partySize }}</td>
               <td class="p-3">{{ b.clientName }}<br><span class="text-xs text-neutral-400">{{ b.clientEmail }}</span></td>
               <td class="p-3 text-xs">{{ b.clientPhone }}</td>
-              <td class="p-3"><span :class="badgeClass(b.status)" class="px-2 py-0.5 rounded text-xs">{{ b.status }}</span></td>
+              <td class="p-3"><span :class="badgeClass(b.status)" class="px-2 py-0.5 text-xs">{{ b.status }}</span></td>
               <td class="p-3 space-x-2 whitespace-nowrap">
                 <button v-if="b.status === 'PENDING'" @click="patch(b.id, 'CONFIRMED')" class="text-xs text-green-700 hover:underline">Confirmer</button>
                 <button v-if="b.status !== 'CANCELLED'" @click="patch(b.id, 'CANCELLED')" class="text-xs text-red-700 hover:underline">Annuler</button>
@@ -103,8 +103,8 @@ onMounted(fetch)
       <div class="p-4 border-t border-neutral-100 flex justify-between text-sm">
         <span>{{ total }} résultat{{ total > 1 ? 's' : '' }}</span>
         <div class="space-x-2">
-          <button :disabled="page <= 1" @click="page--; fetch()" class="px-2 py-1 border border-neutral-200 rounded disabled:opacity-50">‹</button>
-          <button :disabled="page * pageSize >= total" @click="page++; fetch()" class="px-2 py-1 border border-neutral-200 rounded disabled:opacity-50">›</button>
+          <button :disabled="page <= 1" @click="page--; fetch()" class="px-2 py-1 border border-neutral-200 disabled:opacity-50">‹</button>
+          <button :disabled="page * pageSize >= total" @click="page++; fetch()" class="px-2 py-1 border border-neutral-200 disabled:opacity-50">›</button>
         </div>
       </div>
     </div>

@@ -1,10 +1,17 @@
 <template>
-  <!-- Section parent : bg clair, contient 2 cards sombres cote a cote -->
-  <section id="contact" class="py-20 lg:py-28 px-6 sm:px-10 lg:px-16" style="background-color: #f5f5f5;">
-    <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-6 lg:gap-8">
+  <!-- Section parent : image de fond + filtre sombre + 2 cards par-dessus -->
+  <section
+    id="contact"
+    class="relative py-20 lg:py-28 px-6 sm:px-10 lg:px-16 overflow-hidden"
+    :style="bgStyle"
+  >
+    <!-- Filtre sombre par dessus l'image (visible uniquement si image présente) -->
+    <div v-if="bgImageUrl" class="absolute inset-0" style="background-color: rgba(0,0,0,0.65);"></div>
 
-      <!-- Card 1 : Nous trouver (sombre) -->
-      <div class="rounded-xl p-8 sm:p-10 lg:p-12 flex flex-col" style="background-color: #1f1f1f;">
+    <div class="relative max-w-7xl mx-auto grid lg:grid-cols-2 gap-6 lg:gap-8">
+
+      <!-- Card 1 : Nous trouver -->
+      <div class="p-8 sm:p-10 lg:p-12 flex flex-col" style="background-color: #1f1f1f;">
         <h2 class="font-display text-3xl sm:text-4xl lg:text-5xl mb-10 tracking-extra-wide leading-tight text-center" style="color: #f5f5f5;">Nous trouver</h2>
 
         <div class="space-y-8 flex-1">
@@ -35,8 +42,8 @@
         </div>
       </div>
 
-      <!-- Card 2 : Nous écrire (sombre) -->
-      <div class="rounded-xl p-8 sm:p-10 lg:p-12 flex flex-col" style="background-color: #1f1f1f;">
+      <!-- Card 2 : Nous écrire -->
+      <div class="p-8 sm:p-10 lg:p-12 flex flex-col" style="background-color: #1f1f1f;">
         <h2 class="font-display text-3xl sm:text-4xl lg:text-5xl mb-10 tracking-extra-wide leading-tight text-center" style="color: #f5f5f5;">Nous écrire</h2>
         <div class="flex-1">
           <ContactForm dark />
@@ -49,6 +56,19 @@
 
 <script setup lang="ts">
 const props = defineProps<{ site: Record<string, string>; windows: any[] }>()
+const config = useRuntimeConfig()
+
+const bgImageUrl = computed(() =>
+  props.site.contact_bg_image_id
+    ? `${config.public.apiUrl}/images/${props.site.contact_bg_image_id}`
+    : null,
+)
+
+const bgStyle = computed(() =>
+  bgImageUrl.value
+    ? `background-image: url('${bgImageUrl.value}'); background-size: cover; background-position: center;`
+    : 'background-color: #f5f5f5;',
+)
 
 const mapsUrl = computed(() => {
   if (props.site.google_maps_embed_url?.trim()) return props.site.google_maps_embed_url

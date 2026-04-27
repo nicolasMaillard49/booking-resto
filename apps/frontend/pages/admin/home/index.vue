@@ -81,14 +81,14 @@ function extractError(e: unknown): string {
   <div>
     <div class="flex items-center justify-between mb-6">
       <h1 class="text-2xl font-bold text-neutral-900">Page d'accueil</h1>
-      <button @click="openModal()" class="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm hover:bg-primary-700">+ Ajouter une section</button>
+      <button @click="openModal()" class="px-4 py-2 bg-primary-600 text-white text-sm hover:bg-primary-700">+ Ajouter une section</button>
     </div>
 
     <ul class="space-y-3">
-      <li v-for="(s, i) in sections" :key="s.id" class="bg-white border border-neutral-100 rounded-xl p-4 flex items-center gap-4">
+      <li v-for="(s, i) in sections" :key="s.id" class="bg-white border border-neutral-100 p-4 flex items-center gap-4">
         <span class="text-neutral-400 text-sm w-8">#{{ i + 1 }}</span>
-        <img v-if="s.image" :src="`${apiUrl}/images/${s.image.id}`" class="h-16 w-16 object-cover rounded" />
-        <div v-else class="h-16 w-16 bg-neutral-100 rounded flex items-center justify-center text-neutral-300 text-xs">∅</div>
+        <img v-if="s.image" :src="`${apiUrl}/images/${s.image.id}`" class="h-16 w-16 object-cover" />
+        <div v-else class="h-16 w-16 bg-neutral-100 flex items-center justify-center text-neutral-300 text-xs">∅</div>
         <div class="flex-1 min-w-0">
           <p class="font-medium">{{ s.title }} <span v-if="!s.isPublished" class="text-xs text-neutral-400">(brouillon)</span></p>
           <p class="text-sm text-neutral-500 truncate">{{ s.body }}</p>
@@ -105,13 +105,13 @@ function extractError(e: unknown): string {
 
     <Teleport to="body">
       <div v-if="modal.open" class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-6">
-        <div class="bg-white rounded-xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="bg-white p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
           <h3 class="text-lg font-semibold mb-4">{{ modal.editing ? 'Modifier' : 'Ajouter' }} une section</h3>
           <form @submit.prevent="submit" class="space-y-4">
             <div><label class="block text-sm mb-1">Titre</label>
-              <input v-model="modal.form.title" required class="w-full px-3 py-2 border border-neutral-200 rounded-lg" /></div>
+              <input v-model="modal.form.title" required class="w-full px-3 py-2 border border-neutral-200" /></div>
             <div><label class="block text-sm mb-1">Texte</label>
-              <textarea v-model="modal.form.body" required rows="6" class="w-full px-3 py-2 border border-neutral-200 rounded-lg"></textarea></div>
+              <textarea v-model="modal.form.body" required rows="6" class="w-full px-3 py-2 border border-neutral-200"></textarea></div>
             <div>
               <label class="block text-sm mb-2">Image</label>
               <AdminImagePicker v-model="modal.form.imageId" section="HOMESECTION" />
@@ -120,8 +120,8 @@ function extractError(e: unknown): string {
               <input v-model="modal.form.isPublished" type="checkbox" /> Publié
             </label>
             <div class="flex gap-2 justify-end">
-              <button type="button" @click="modal.open = false" class="px-4 py-2 border border-neutral-200 rounded-lg">Annuler</button>
-              <button type="submit" :disabled="modal.uploading" class="px-4 py-2 bg-primary-600 text-white rounded-lg disabled:opacity-50">Enregistrer</button>
+              <button type="button" @click="modal.open = false" class="px-4 py-2 border border-neutral-200">Annuler</button>
+              <button type="submit" :disabled="modal.uploading" class="px-4 py-2 bg-primary-600 text-white disabled:opacity-50">Enregistrer</button>
             </div>
           </form>
         </div>

@@ -13,7 +13,7 @@ const config: Record<string, { label: string; classes: string }> = {
 <template>
   <span
     :class="[
-      'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
+      'inline-flex items-center px-2.5 py-0.5 text-xs font-medium',
       config[status]?.classes || 'bg-neutral-100 text-neutral-500'
     ]"
   >

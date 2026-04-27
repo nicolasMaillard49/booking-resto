@@ -2,7 +2,7 @@
   <div class="space-y-2">
     <!-- Aperçu sélection -->
     <div v-if="modelValue" class="flex items-center gap-3">
-      <img :src="`${apiUrl}/images/${modelValue}`" class="h-20 w-20 object-cover rounded border border-neutral-200" />
+      <img :src="`${apiUrl}/images/${modelValue}`" class="h-20 w-20 object-cover border border-neutral-200" />
       <div class="text-sm">
         <p class="text-neutral-700 font-mono text-xs truncate max-w-[240px]">{{ modelValue }}</p>
         <button type="button" @click="$emit('update:modelValue', '')" class="text-red-700 hover:underline">Retirer</button>
@@ -11,24 +11,24 @@
 
     <!-- Bouton upload + galerie existante -->
     <div class="flex flex-wrap gap-2 items-center">
-      <label class="px-3 py-1.5 bg-primary-600 text-white rounded-lg text-xs cursor-pointer hover:bg-primary-700">
+      <label class="px-3 py-1.5 bg-primary-600 text-white text-xs cursor-pointer hover:bg-primary-700">
         + Uploader
         <input type="file" :accept="accept" @change="onUpload" class="hidden" />
       </label>
-      <button type="button" @click="open = !open" class="px-3 py-1.5 border border-neutral-200 rounded-lg text-xs hover:bg-neutral-50">
+      <button type="button" @click="open = !open" class="px-3 py-1.5 border border-neutral-200 text-xs hover:bg-neutral-50">
         {{ open ? '× Fermer' : `📁 Choisir parmi ${images.length}` }}
       </button>
       <span v-if="uploading" class="text-xs text-neutral-500">Upload…</span>
     </div>
 
     <!-- Galerie -->
-    <div v-if="open" class="grid grid-cols-4 gap-2 p-2 border border-neutral-200 rounded-lg max-h-64 overflow-y-auto bg-neutral-50">
+    <div v-if="open" class="grid grid-cols-4 gap-2 p-2 border border-neutral-200 max-h-64 overflow-y-auto bg-neutral-50">
       <button
         v-for="img in images"
         :key="img.id"
         type="button"
         @click="select(img.id)"
-        :class="['aspect-square overflow-hidden rounded border-2 transition', modelValue === img.id ? 'border-primary-600 ring-2 ring-primary-200' : 'border-transparent hover:border-primary-400']"
+        :class="['aspect-square overflow-hidden border-2 transition', modelValue === img.id ? 'border-primary-600 ring-2 ring-primary-200' : 'border-transparent hover:border-primary-400']"
       >
         <img :src="`${apiUrl}/images/${img.id}`" class="w-full h-full object-cover" />
       </button>

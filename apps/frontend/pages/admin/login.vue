@@ -26,9 +26,9 @@ async function handleLogin() {
 </script>
 
 <template>
-  <div class="bg-white rounded-2xl shadow-sm p-8 w-full max-w-sm">
+  <div class="bg-white shadow-sm p-8 w-full max-w-sm">
     <div class="text-center mb-8">
-      <div class="mx-auto w-12 h-12 rounded-xl bg-primary-50 text-primary-600 flex items-center justify-center mb-3">
+      <div class="mx-auto w-12 h-12 bg-primary-50 text-primary-600 flex items-center justify-center mb-3">
         <CalendarDays :size="24" :stroke-width="1.8" />
       </div>
       <h1 class="text-2xl font-bold text-neutral-900">Connexion Admin</h1>
@@ -45,7 +45,7 @@ async function handleLogin() {
           required
           autocomplete="email"
           placeholder="admin@salon-emma.fr"
-          class="w-full border border-neutral-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500 transition"
+          class="w-full border border-neutral-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500 transition"
         />
       </div>
 
@@ -58,18 +58,18 @@ async function handleLogin() {
           required
           autocomplete="current-password"
           placeholder="••••••••"
-          class="w-full border border-neutral-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500 transition"
+          class="w-full border border-neutral-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500 transition"
         />
       </div>
 
-      <div v-if="errorMsg" class="bg-red-50 text-red-600 text-sm px-4 py-3 rounded-lg flex items-center gap-2">
+      <div v-if="errorMsg" class="bg-red-50 text-red-600 text-sm px-4 py-3 flex items-center gap-2">
         <AlertTriangle :size="16" class="shrink-0" /> {{ errorMsg }}
       </div>
 
       <button
         type="submit"
         :disabled="isLoading"
-        class="w-full bg-primary-600 hover:bg-primary-700 disabled:opacity-60 text-white py-3 rounded-xl font-semibold transition-colors mt-2"
+        class="w-full bg-primary-600 hover:bg-primary-700 disabled:opacity-60 text-white py-3 font-semibold transition-colors mt-2"
       >
         {{ isLoading ? 'Connexion...' : 'Se connecter' }}
       </button>
