@@ -1,26 +1,26 @@
 <template>
   <form @submit.prevent="submit" class="space-y-5">
     <div>
-      <label :class="labelClass">Nom</label>
-      <input v-model="form.name" required type="text" :class="inputClass" />
+      <label :class="labelClass" :style="dark ? 'color: #c39d63;' : ''">Nom</label>
+      <input v-model="form.name" required type="text" :class="inputClass" :style="dark ? darkInputStyle : ''" />
     </div>
     <div>
-      <label :class="labelClass">Email</label>
-      <input v-model="form.email" required type="email" :class="inputClass" />
+      <label :class="labelClass" :style="dark ? 'color: #c39d63;' : ''">Email</label>
+      <input v-model="form.email" required type="email" :class="inputClass" :style="dark ? darkInputStyle : ''" />
     </div>
     <div>
-      <label :class="labelClass">Message</label>
-      <textarea v-model="form.message" required rows="5" :class="inputClass"></textarea>
+      <label :class="labelClass" :style="dark ? 'color: #c39d63;' : ''">Message</label>
+      <textarea v-model="form.message" required rows="5" :class="inputClass" :style="dark ? darkInputStyle : ''"></textarea>
     </div>
     <div v-if="captcha">
-      <label :class="labelClass">Pour vérifier : combien font {{ captcha.question }} ?</label>
-      <input v-model="form.captchaAnswer" required type="text" :class="['w-32', inputClass]" />
+      <label :class="labelClass" :style="dark ? 'color: #c39d63;' : ''">Pour vérifier : combien font {{ captcha.question }} ?</label>
+      <input v-model="form.captchaAnswer" required type="text" :class="['w-32', inputClass]" :style="dark ? darkInputStyle : ''" />
     </div>
-    <button type="submit" :disabled="submitting" class="px-12 py-4 bg-gold text-canvas hover:bg-gold/90 transition disabled:opacity-50 tracking-wider uppercase text-sm">
+    <button type="submit" :disabled="submitting" class="px-12 py-4 transition disabled:opacity-50 tracking-wider uppercase text-sm" style="background-color: #c39d63; color: #f5f5f5;">
       {{ submitting ? 'Envoi…' : 'Envoyer le message' }}
     </button>
-    <p v-if="success" :class="dark ? 'text-green-400 tracking-wide' : 'text-green-700 tracking-wide'">Message envoyé, merci !</p>
-    <p v-if="error" :class="dark ? 'text-red-400 tracking-wide' : 'text-red-700 tracking-wide'">{{ error }}</p>
+    <p v-if="success" class="tracking-wide" :style="dark ? 'color: #4ade80;' : 'color: #15803d;'">Message envoyé, merci !</p>
+    <p v-if="error" class="tracking-wide" :style="dark ? 'color: #f87171;' : 'color: #b91c1c;'">{{ error }}</p>
   </form>
 </template>
 
@@ -33,16 +33,13 @@ const submitting = ref(false)
 const success = ref(false)
 const error = ref('')
 
-const labelClass = computed(() =>
-  props.dark
-    ? 'block text-xs uppercase tracking-mega-wide mb-2 text-gold'
-    : 'block text-xs uppercase tracking-mega-wide mb-2 text-muted',
-)
+const labelClass = computed(() => 'block text-xs uppercase tracking-mega-wide mb-2 ' + (props.dark ? '' : 'text-muted'))
 const inputClass = computed(() =>
   props.dark
-    ? 'w-full px-4 py-3 border border-white/20 bg-white/5 text-canvas placeholder-canvas/40 focus:outline-none focus:border-gold tracking-wide'
+    ? 'w-full px-4 py-3 border focus:outline-none tracking-wide'
     : 'w-full px-4 py-3 border border-line bg-canvas text-ink focus:outline-none focus:border-heading tracking-wide',
 )
+const darkInputStyle = 'background-color: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2); color: #f5f5f5;'
 
 onMounted(async () => { await refreshCaptcha() })
 
